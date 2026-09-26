@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { @apply border-base-border; }
+  html { scroll-behavior: auto; } /* Lenis handles smooth scroll instead */
+  body { @apply bg-base-black text-foreground; }
+
+  ::selection { @apply bg-accent-cyan/30 text-foreground; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .bg-grid {
+    background-image: theme("backgroundImage.grid-pattern");
+    background-size: theme("backgroundSize.grid");
+  }
+}

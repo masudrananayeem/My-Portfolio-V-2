@@ -17,7 +17,7 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
       clearTimeout(t);
       clearTimeout(t2);
     };
-  }, [stepIndex, onDone]
+  }, [stepIndex, onDone]);
 
   return (
     <div

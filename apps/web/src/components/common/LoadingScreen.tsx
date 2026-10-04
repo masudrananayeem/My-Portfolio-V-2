@@ -19,8 +19,6 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
     };
   }, [stepIndex, onDone]);
 
-
-  
   return (
     <div
       className={`fixed inset-0 z-[200] flex flex-col items-center justify-center bg-base-black transition-opacity duration-500 ${

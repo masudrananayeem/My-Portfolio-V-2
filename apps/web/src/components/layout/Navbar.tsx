@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { cn } from "@nayeem/utils";
 import { Menu, X } from "lucide-react";
+import { scrollToTop } from "../../lib/lenis";
 import { ThemeToggle } from "../common/ThemeToggle";
 
 const NAV_ITEMS = [
@@ -34,8 +35,13 @@ export function Navbar() {
       )}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
-        <Link to="/" className="font-display text-sm font-semibold tracking-widest text-foreground">
-          M<span className="text-accent-cyan">R</span>N
+        <Link
+          to="/"
+          onClick={() => scrollToTop(true)}
+          className="flex items-center"
+          aria-label="Masud Rana Nayeem — Home"
+        >
+          <img src="/mrn-logo.webp" alt="MRN" className="h-9 w-auto object-contain" />
         </Link>
 
         <ul className="hidden items-center gap-8 lg:flex">
@@ -44,6 +50,7 @@ export function Navbar() {
               <NavLink
                 to={item.to}
                 end={item.to === "/"}
+                onClick={() => scrollToTop(true)}
                 className={({ isActive }) =>
                   cn(
                     "font-mono text-[11px] tracking-[0.2em] transition-colors",
@@ -60,7 +67,7 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <a
-            href="#resume"
+            href="/resume.pdf" download="Masud_Rana_Nayeem_Resume.pdf"
             className="hidden font-mono text-[11px] tracking-[0.2em] border border-base-border px-4 py-2 hover:border-accent-cyan hover:text-accent-cyan transition-colors lg:inline-flex"
           >
             RESUME
@@ -84,7 +91,7 @@ export function Navbar() {
                 <NavLink
                   to={item.to}
                   end={item.to === "/"}
-                  onClick={() => setOpen(false)}
+                  onClick={() => { setOpen(false); scrollToTop(true); }}
                   className={({ isActive }) =>
                     cn(
                       "block py-3 font-mono text-xs tracking-[0.2em]",
@@ -97,6 +104,14 @@ export function Navbar() {
               </li>
             ))}
           </ul>
+          <a
+            href="/resume.pdf"
+            download="Masud_Rana_Nayeem_Resume.pdf"
+            onClick={() => setOpen(false)}
+            className="mx-6 mb-4 inline-flex items-center justify-center border border-base-border px-4 py-3 font-mono text-xs tracking-[0.2em] text-foreground hover:border-accent-cyan hover:text-accent-cyan"
+          >
+            DOWNLOAD RESUME
+          </a>
         </div>
       )}
     </header>

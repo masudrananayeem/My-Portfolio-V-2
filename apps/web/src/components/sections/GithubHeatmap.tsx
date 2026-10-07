@@ -102,8 +102,25 @@ export function GithubHeatmap({ days }: { days: GithubContributionDay[] }) {
 
   if (!days.length) {
     return (
-      <div className="rounded-xl border border-base-border bg-base-panel/40 p-6 text-sm text-foreground-muted">
-        Contribution calendar will appear here when the GitHub Worker is configured.
+      <div className="rounded-xl border border-base-border bg-base-panel/40 p-6 sm:p-7">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="font-mono text-[10px] font-semibold tracking-[0.2em] text-accent-cyan">GITHUB WORKER REQUIRED</p>
+            <h3 className="mt-2 font-display text-lg font-semibold text-foreground">Connect the Cloudflare Worker to show your real calendar.</h3>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-foreground-muted">
+              Set <code className="rounded bg-base-panel px-1.5 py-0.5 font-mono text-xs text-foreground">GITHUB_USERNAME</code>,
+              <code className="ml-1 rounded bg-base-panel px-1.5 py-0.5 font-mono text-xs text-foreground">GITHUB_TOKEN</code> and
+              <code className="ml-1 rounded bg-base-panel px-1.5 py-0.5 font-mono text-xs text-foreground">ALLOWED_ORIGIN</code> in the Worker, deploy it, then put the Worker URL in
+              <code className="ml-1 rounded bg-base-panel px-1.5 py-0.5 font-mono text-xs text-foreground">VITE_WORKER_API_URL</code>.
+            </p>
+          </div>
+          <a href="https://github.com/masudrananayeem" target="_blank" rel="noreferrer" className="shrink-0 rounded-md border border-base-border px-3 py-2 font-mono text-[9px] tracking-widest text-foreground hover:border-accent-cyan hover:text-accent-cyan">VIEW GITHUB</a>
+        </div>
+        <div className="mt-5 grid gap-3 text-[10px] font-mono text-foreground-muted sm:grid-cols-3">
+          <div className="rounded-lg border border-base-border p-3"><b className="text-foreground">01</b> Create a KV namespace named <span className="text-accent-cyan">GITHUB_CACHE</span>.</div>
+          <div className="rounded-lg border border-base-border p-3"><b className="text-foreground">02</b> Run <span className="text-accent-cyan">wrangler secret put GITHUB_TOKEN</span>.</div>
+          <div className="rounded-lg border border-base-border p-3"><b className="text-foreground">03</b> Deploy Worker and set its URL in the frontend <span className="text-accent-cyan">.env</span>.</div>
+        </div>
       </div>
     );
   }

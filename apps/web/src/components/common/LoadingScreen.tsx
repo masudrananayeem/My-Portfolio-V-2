@@ -34,7 +34,7 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
       <div className="relative flex flex-col items-center">
         <div className="loading-logo-shell relative flex h-24 w-24 items-center justify-center rounded-2xl border border-accent-cyan/40 bg-base-panel/80 shadow-[0_0_70px_rgb(var(--accent-primary)/0.18)]">
           <div className="absolute inset-2 rounded-xl border border-base-border" />
-          <span className="font-tech text-2xl font-black tracking-[0.18em] text-foreground">M<span className="text-accent-cyan">R</span>N</span>
+          <img src="/mrn-logo.webp" alt="MRN" className="relative z-10 w-16 object-contain" />
           <span className="absolute -bottom-2 rounded-full border border-base-border bg-base-black px-2 py-0.5 font-mono text-[8px] tracking-[0.25em] text-foreground-muted">PORTFOLIO</span>
         </div>
 

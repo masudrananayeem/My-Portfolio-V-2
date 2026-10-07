@@ -37,3 +37,11 @@ export function destroySmoothScroll() {
 export function getLenis() {
   return lenis;
 }
+
+export function scrollToTop(immediate = false) {
+  if (lenis) {
+    lenis.scrollTo(0, { immediate });
+    return;
+  }
+  window.scrollTo({ top: 0, left: 0, behavior: immediate ? "auto" : "smooth" });
+}

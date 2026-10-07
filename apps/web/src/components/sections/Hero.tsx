@@ -45,7 +45,13 @@ export function Hero() {
             <p className="hero-copy-reveal mt-6 max-w-xl text-foreground-muted">{profile?.bio ?? "Building digital systems at the intersection of full-stack engineering and applied AI/ML — from production web platforms to research prototypes."}</p>
             <div className="hero-copy-reveal mt-8 flex flex-wrap gap-4">
               <LinkButton href="/projects" variant="primary">VIEW MY WORK</LinkButton>
-              <LinkButton href={profile?.resumeUrl ?? "#"} variant="outline" target="_blank" rel="noreferrer">DOWNLOAD RESUME</LinkButton>
+              <LinkButton
+                href={profile?.resumeUrl ?? "/resume.pdf"}
+                variant="outline"
+                download={profile?.resumeUrl ? undefined : "Masud_Rana_Nayeem_Resume.pdf"}
+                target={profile?.resumeUrl ? "_blank" : undefined}
+                rel={profile?.resumeUrl ? "noreferrer" : undefined}
+              >DOWNLOAD RESUME</LinkButton>
               <LinkButton href="/contact" variant="ghost">CONTACT ME</LinkButton>
             </div>
             <div className="hero-copy-reveal"><TrustStats /></div>
@@ -57,8 +63,8 @@ export function Hero() {
             <div ref={frameRef} className="group relative mx-auto w-full max-w-[17.5rem] sm:max-w-sm">
               <div className="absolute -inset-4 rounded-2xl bg-gradient-to-br from-accent-cyan/12 via-accent-purple/8 to-transparent opacity-70 blur-2xl transition-opacity duration-700 group-hover:opacity-100 dark:opacity-70" />
               <div className="relative overflow-hidden rounded-2xl border border-base-border bg-base-panel/40 shadow-[0_18px_42px_-24px_rgb(15_23_42/0.28)] dark:shadow-[0_20px_52px_-28px_rgb(0_229_255/0.22)]">
-                <img src={avatarUrl} alt="Masud Rana Nayeem — Full Stack Developer" className="aspect-[4/5] w-full object-cover opacity-95 transition-transform duration-1000 ease-out group-hover:scale-[1.035]" />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-base-panel/90 to-transparent" />
+                <img src={avatarUrl} alt="Masud Rana Nayeem — Full Stack Developer" className="aspect-[4/5] w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.035]" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/18 to-transparent" />
                 <div className="pointer-events-none absolute inset-0 overflow-hidden"><div className="absolute inset-x-0 h-px animate-scan bg-gradient-to-r from-transparent via-accent-cyan to-transparent opacity-70" /></div>
                 <span className="absolute left-0 top-0 h-6 w-6 border-l-2 border-t-2 border-accent-cyan/70" />
                 <span className="absolute right-0 top-0 h-6 w-6 border-r-2 border-t-2 border-accent-cyan/70" />

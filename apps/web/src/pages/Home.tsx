@@ -4,6 +4,7 @@ import { ProjectsPreview } from "../components/sections/ProjectsPreview";
 import { GithubActivityPreview } from "../components/sections/GithubActivityPreview";
 import { Container, SectionLabel, GlowCard, LinkButton } from "@nayeem/ui";
 import { useSkills, useServices } from "../hooks/useFirestoreData";
+import { SectionReveal } from "../components/common/SectionReveal";
 
 export function Home() {
   const { data: skills } = useSkills();
@@ -12,10 +13,10 @@ export function Home() {
   return (
     <>
       <Hero />
-      <TechMarquee />
+      <SectionReveal><TechMarquee /></SectionReveal>
 
       {/* About preview */}
-      <section className="py-24">
+      <SectionReveal><section className="py-24">
         <Container className="grid gap-10 md:grid-cols-2 md:items-center">
           <div>
             <SectionLabel index="01" label="About" className="mb-6" />
@@ -35,12 +36,12 @@ export function Home() {
             ))}
           </div>
         </Container>
-      </section>
+      </section></SectionReveal>
 
-      <ProjectsPreview />
+      <SectionReveal><ProjectsPreview /></SectionReveal>
 
       {/* Services preview */}
-      <section className="py-24">
+      <SectionReveal><section className="py-24">
         <Container>
           <SectionLabel index="06" label="Services" className="mb-10" />
           <div className="grid gap-6 md:grid-cols-3">
@@ -52,9 +53,9 @@ export function Home() {
             ))}
           </div>
         </Container>
-      </section>
+      </section></SectionReveal>
 
-      <GithubActivityPreview />
+      <SectionReveal><GithubActivityPreview /></SectionReveal>
     </>
   );
 }

@@ -5,18 +5,20 @@ gsap.registerPlugin(ScrollTrigger);
 
 export { gsap, ScrollTrigger };
 
-/** Standard fade-up reveal used across section headings/cards */
+/** Premium fade/slide/blur reveal used across the page. */
 export function fadeUpReveal(target: gsap.TweenTarget, trigger: Element, delay = 0) {
   return gsap.fromTo(
     target,
-    { opacity: 0, y: 40 },
+    { opacity: 0, y: 58, filter: "blur(10px)", scale: 0.985 },
     {
       opacity: 1,
       y: 0,
-      duration: 0.9,
+      filter: "blur(0px)",
+      scale: 1,
+      duration: 1.05,
       delay,
       ease: "power3.out",
-      scrollTrigger: { trigger, start: "top 85%" },
+      scrollTrigger: { trigger, start: "top 86%", once: true },
     }
   );
 }

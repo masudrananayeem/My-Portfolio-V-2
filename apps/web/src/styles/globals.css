@@ -9,8 +9,8 @@
   --base-panel: 23 28 37;
   --base-border: 43 50 62;
   --foreground: 245 247 250;
-  --foreground-muted: 156 166 181;
-  --foreground-faint: 102 113 130;
+  --foreground-muted: 164 174 190;
+  --foreground-faint: 112 124 143;
   --accent-primary: 45 212 191;
   --accent-secondary: 129 140 248;
   --accent-blue: 59 130 246;
@@ -19,16 +19,16 @@
 }
 
 html.light {
-  --base-black: 247 249 252;
+  --base-black: 248 250 252;
   --base-near: 255 255 255;
-  --base-charcoal: 239 242 247;
+  --base-charcoal: 241 245 249;
   --base-panel: 255 255 255;
-  --base-border: 220 226 235;
-  --foreground: 17 24 39;
-  --foreground-muted: 75 85 99;
-  --foreground-faint: 107 114 128;
+  --base-border: 203 213 225;
+  --foreground: 15 23 42;
+  --foreground-muted: 55 65 81;
+  --foreground-faint: 100 116 139;
   --accent-primary: 13 148 136;
-  --accent-secondary: 99 102 241;
+  --accent-secondary: 79 70 229;
   --accent-blue: 37 99 235;
   --accent-success: 5 150 105;
   --grid-line: 15 23 42;
@@ -40,6 +40,7 @@ html.light {
   body {
     @apply bg-base-black text-foreground font-body antialiased;
     min-width: 320px;
+    text-rendering: optimizeLegibility;
   }
   ::selection { @apply bg-accent-cyan/25 text-foreground; }
   button, a { -webkit-tap-highlight-color: transparent; }
@@ -59,3 +60,43 @@ html.light {
     background-size: theme("backgroundSize.grid");
   }
 }
+
+html.light .bg-glow-radial { opacity: 0.38; }
+html.light .github-heatmap-shell { color: rgb(var(--foreground)); }
+html.light .github-calendar-scroll { scrollbar-color: rgb(var(--accent-primary) / .45) transparent; }
+
+.github-calendar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--accent-primary) / .55) transparent;
+}
+
+.loading-grid {
+  background-image:
+    linear-gradient(rgb(var(--grid-line) / .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--grid-line) / .045) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: radial-gradient(circle at center, black 0%, transparent 72%);
+}
+
+.loading-logo-shell::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border: 1px solid rgb(var(--accent-primary) / .18);
+  border-radius: 24px;
+  animation: loading-pulse 1.8s ease-in-out infinite;
+}
+
+.loading-logo-shell::after {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  border: 1px dashed rgb(var(--accent-primary) / .12);
+  border-radius: 999px;
+  animation: loading-spin 8s linear infinite;
+}
+
+.loading-orbit { animation: loading-spin 9s linear infinite; }
+
+@keyframes loading-spin { to { transform: rotate(360deg); } }
+@keyframes loading-pulse { 0%,100% { transform: scale(.94); opacity:.35; } 50% { transform: scale(1.06); opacity:.85; } }

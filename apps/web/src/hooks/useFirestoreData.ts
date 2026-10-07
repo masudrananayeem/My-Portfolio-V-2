@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getCollection, getDocument, COLLECTIONS, orderBy } from "@nayeem/firebase";
 import type { DocumentData } from "@nayeem/firebase";
 import type {
@@ -84,11 +84,14 @@ async function fetchWorker<T>(path: string): Promise<T> {
   return json.data;
 }
 
-export function useGithubActivity(enabled = true): AsyncState<GithubActivityData> {
+export function useGithubActivity(enabled = true): AsyncState<GithubActivityData> & { refresh: () => void } {
   const { data: settings } = useGithubSettings();
+  const [refreshKey, setRefreshKey] = useState(0);
   const [state, setState] = useState<AsyncState<GithubActivityData>>({
     data: null, loading: enabled, error: null,
   });
+
+  const refresh = useCallback(() => setRefreshKey((value) => value + 1), []);
 
   useEffect(() => {
     if (!enabled) {
@@ -109,9 +112,9 @@ export function useGithubActivity(enabled = true): AsyncState<GithubActivityData
         });
       });
     return () => { active = false; };
-  }, [enabled, settings?.cachedContributionCount]);
+  }, [enabled, settings?.cachedContributionCount, refreshKey]);
 
-  return state;
+  return { ...state, refresh };
 }
 
 export function useGithubProfile(enabled = true): AsyncState<GithubProfileData> {

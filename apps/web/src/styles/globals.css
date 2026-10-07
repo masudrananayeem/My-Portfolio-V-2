@@ -61,6 +61,66 @@ html.light {
   }
 }
 
+
+.site-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 15%, rgb(var(--accent-primary) / .055), transparent 26%),
+    radial-gradient(circle at 85% 35%, rgb(var(--accent-secondary) / .045), transparent 28%),
+    radial-gradient(circle at 50% 100%, rgb(var(--accent-blue) / .035), transparent 34%);
+}
+
+.site-background::before,
+.site-background::after {
+  content: "";
+  position: absolute;
+  width: 32rem;
+  height: 32rem;
+  border-radius: 999px;
+  filter: blur(70px);
+  opacity: .16;
+  animation: ambient-drift 18s ease-in-out infinite alternate;
+}
+
+.site-background::before {
+  left: -18rem;
+  top: 18%;
+  background: rgb(var(--accent-primary) / .18);
+}
+
+.site-background::after {
+  right: -18rem;
+  top: 52%;
+  background: rgb(var(--accent-secondary) / .16);
+  animation-delay: -7s;
+}
+
+@keyframes ambient-drift {
+  from { transform: translate3d(0, -2%, 0) scale(.96); }
+  to { transform: translate3d(8%, 5%, 0) scale(1.08); }
+}
+
+html.light .site-background {
+  opacity: .7;
+}
+
+@media (max-width: 640px) {
+  .site-background::before,
+  .site-background::after {
+    width: 22rem;
+    height: 22rem;
+    filter: blur(58px);
+    opacity: .10;
+  }
+
+  .site-background::before { left: -16rem; }
+  .site-background::after { right: -16rem; }
+}
+
 html.light .bg-glow-radial { opacity: 0.38; }
 html.light .github-heatmap-shell { color: rgb(var(--foreground)); }
 html.light .github-calendar-scroll { scrollbar-color: rgb(var(--accent-primary) / .45) transparent; }

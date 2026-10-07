@@ -2,14 +2,13 @@ import { Outlet, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
-import { CustomCursor } from "../common/CustomCursor";
 
 export function Layout() {
   const location = useLocation();
 
   return (
-    <div className="relative min-h-screen bg-base-black">
-      <CustomCursor />
+    <div className="relative min-h-screen overflow-x-clip bg-base-black">
+      <div aria-hidden="true" className="site-background" />
       <Navbar />
       <main className="pt-20">
         <AnimatePresence mode="wait">

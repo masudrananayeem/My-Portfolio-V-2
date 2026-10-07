@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import { cn } from "@nayeem/utils";
 import { Menu, X } from "lucide-react";
+import { ThemeToggle } from "../common/ThemeToggle";
 
 const NAV_ITEMS = [
   { to: "/", label: "HOME" },
@@ -56,20 +57,23 @@ export function Navbar() {
           ))}
         </ul>
 
-        <a
-          href="#resume"
-          className="hidden font-mono text-[11px] tracking-[0.2em] border border-base-border px-4 py-2 hover:border-accent-cyan hover:text-accent-cyan transition-colors lg:inline-flex"
-        >
-          RESUME
-        </a>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <a
+            href="#resume"
+            className="hidden font-mono text-[11px] tracking-[0.2em] border border-base-border px-4 py-2 hover:border-accent-cyan hover:text-accent-cyan transition-colors lg:inline-flex"
+          >
+            RESUME
+          </a>
+          <button
+            className="lg:hidden text-foreground p-2"
 
-        <button
-          className="lg:hidden text-foreground"
           aria-label="Toggle menu"
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
+            {open ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
       </nav>
 
       {open && (

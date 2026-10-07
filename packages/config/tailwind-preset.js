@@ -1,4 +1,4 @@
-/** Shared design system — imported as a Tailwind preset by both apps/web and apps/admin */
+/** Shared design system — theme-aware for web + admin. */
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
@@ -6,22 +6,22 @@ module.exports = {
     extend: {
       colors: {
         base: {
-          black: "#050608",
-          near: "#0A0C10",
-          charcoal: "#13161C",
-          panel: "#171A21",
-          border: "#22262F",
+          black: "rgb(var(--base-black) / <alpha-value>)",
+          near: "rgb(var(--base-near) / <alpha-value>)",
+          charcoal: "rgb(var(--base-charcoal) / <alpha-value>)",
+          panel: "rgb(var(--base-panel) / <alpha-value>)",
+          border: "rgb(var(--base-border) / <alpha-value>)",
         },
         accent: {
-          cyan: "#00E5FF",
-          blue: "#3B82F6",
-          purple: "#8B5CF6",
-          green: "#22D3A5",
+          cyan: "rgb(var(--accent-primary) / <alpha-value>)",
+          blue: "rgb(var(--accent-blue) / <alpha-value>)",
+          purple: "rgb(var(--accent-secondary) / <alpha-value>)",
+          green: "rgb(var(--accent-success) / <alpha-value>)",
         },
         foreground: {
-          DEFAULT: "#F5F7FA",
-          muted: "#9AA3B2",
-          faint: "#5B6272",
+          DEFAULT: "rgb(var(--foreground) / <alpha-value>)",
+          muted: "rgb(var(--foreground-muted) / <alpha-value>)",
+          faint: "rgb(var(--foreground-faint) / <alpha-value>)",
         },
       },
       fontFamily: {
@@ -32,30 +32,16 @@ module.exports = {
       },
       backgroundImage: {
         "grid-pattern":
-          "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+          "linear-gradient(rgb(var(--grid-line) / 0.06) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--grid-line) / 0.06) 1px, transparent 1px)",
         "glow-radial":
-          "radial-gradient(circle at 50% 0%, rgba(0,229,255,0.15), transparent 60%)",
+          "radial-gradient(circle at 50% 0%, rgb(var(--accent-primary) / 0.16), transparent 60%)",
       },
-      backgroundSize: {
-        grid: "40px 40px",
-      },
+      backgroundSize: { grid: "40px 40px" },
       keyframes: {
-        marquee: {
-          "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-50%)" },
-        },
-        "marquee-reverse": {
-          "0%": { transform: "translateX(-50%)" },
-          "100%": { transform: "translateX(0)" },
-        },
-        "pulse-glow": {
-          "0%, 100%": { opacity: 1 },
-          "50%": { opacity: 0.5 },
-        },
-        scan: {
-          "0%": { transform: "translateY(-100%)" },
-          "100%": { transform: "translateY(100%)" },
-        },
+        marquee: { "0%": { transform: "translateX(0)" }, "100%": { transform: "translateX(-50%)" } },
+        "marquee-reverse": { "0%": { transform: "translateX(-50%)" }, "100%": { transform: "translateX(0)" } },
+        "pulse-glow": { "0%, 100%": { opacity: 1 }, "50%": { opacity: 0.5 } },
+        scan: { "0%": { transform: "translateY(-100%)" }, "100%": { transform: "translateY(100%)" } },
       },
       animation: {
         marquee: "marquee 30s linear infinite",

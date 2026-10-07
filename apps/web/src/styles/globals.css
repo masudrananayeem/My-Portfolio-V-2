@@ -2,13 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --base-black: 5 7 10;
+  --base-near: 10 13 18;
+  --base-charcoal: 18 22 29;
+  --base-panel: 23 28 37;
+  --base-border: 43 50 62;
+  --foreground: 245 247 250;
+  --foreground-muted: 156 166 181;
+  --foreground-faint: 102 113 130;
+  --accent-primary: 45 212 191;
+  --accent-secondary: 129 140 248;
+  --accent-blue: 59 130 246;
+  --accent-success: 34 211 165;
+  --grid-line: 255 255 255;
+}
+
+html.light {
+  --base-black: 247 249 252;
+  --base-near: 255 255 255;
+  --base-charcoal: 239 242 247;
+  --base-panel: 255 255 255;
+  --base-border: 220 226 235;
+  --foreground: 17 24 39;
+  --foreground-muted: 75 85 99;
+  --foreground-faint: 107 114 128;
+  --accent-primary: 13 148 136;
+  --accent-secondary: 99 102 241;
+  --accent-blue: 37 99 235;
+  --accent-success: 5 150 105;
+  --grid-line: 15 23 42;
+}
+
 @layer base {
   * { @apply border-base-border; }
-  html { scroll-behavior: auto; } /* Lenis handles smooth scroll instead */
-  body { @apply bg-base-black text-foreground; }
-
-  ::selection { @apply bg-accent-cyan/30 text-foreground; }
-
+  html { scroll-behavior: auto; }
+  body {
+    @apply bg-base-black text-foreground font-body antialiased;
+    min-width: 320px;
+  }
+  ::selection { @apply bg-accent-cyan/25 text-foreground; }
+  button, a { -webkit-tap-highlight-color: transparent; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;

@@ -1,19 +1,23 @@
 {
-  "name": "nayeem-portfolio-web",
+  "name": "nayeem-portfolio",
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev:web": "pnpm --filter web dev",
-    "dev:admin": "pnpm --filter admin dev",
-    "build": "turbo run build",
-    "build:web": "pnpm --filter web build",
-    "build:admin": "pnpm --filter admin build",
-    "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck"
+    "dev": "npm run dev:web",
+    "dev:web": "npm --workspace web run dev",
+    "dev:admin": "npm --workspace admin run dev",
+    "dev:backend": "npm --prefix ../Backend run dev",
+    "build": "npm run build:web && npm run build:admin",
+    "build:web": "npm --workspace web run build",
+    "build:admin": "npm --workspace admin run build",
+    "typecheck": "npm --workspace web run typecheck && npm --workspace admin run typecheck",
+    "install:all": "npm install && npm --prefix ../Backend install"
   },
   "devDependencies": {
-    "turbo": "^2.1.3",
-    "typescript": "^5.6.3"
+    "typescript": "^5.9.3"
   },
-  "packageManager": "pnpm@9.12.0"
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

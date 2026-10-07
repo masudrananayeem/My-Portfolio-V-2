@@ -11,10 +11,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@nayeem/ui": "workspace:*",
-    "@nayeem/types": "workspace:*",
-    "@nayeem/utils": "workspace:*",
-    "@nayeem/firebase": "workspace:*",
+    "@nayeem/ui": "*",
+    "@nayeem/types": "*",
+    "@nayeem/utils": "*",
+    "@nayeem/firebase": "*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.27.0",

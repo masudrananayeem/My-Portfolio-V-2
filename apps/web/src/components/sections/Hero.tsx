@@ -38,7 +38,7 @@ export function Hero() {
       <Container className="relative z-10">
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
           {/* Left: text + spec panel */}
-          <div>
+          <div className="order-2 lg:order-1">
             <StatusPill label={profile?.availableForWork ? "AVAILABLE FOR WORK" : "SYSTEM ONLINE"} />
 
             <p className="mt-6 font-mono text-[11px] tracking-[0.3em] text-accent-purple">
@@ -85,8 +85,8 @@ export function Hero() {
           </div>
 
           {/* Right: framed photo + capabilities */}
-          <div>
-            <div ref={frameRef} className="group relative mx-auto max-w-sm">
+          <div className="order-1 lg:order-2">
+            <div ref={frameRef} className="group relative mx-auto w-full max-w-[20rem] sm:max-w-sm">
               {/* glow backdrop */}
               <div className="absolute -inset-6 rounded-2xl bg-gradient-to-br from-accent-cyan/25 via-accent-purple/15 to-transparent opacity-80 blur-3xl transition-opacity duration-500 group-hover:opacity-100" />
 

@@ -13,7 +13,7 @@ import { SkillsAdmin } from "./pages/Skills";
 import { TechStackAdmin } from "./pages/TechStack";
 import { ExperienceAdmin } from "./pages/Experience";
 import { ResearchAdmin } from "./pages/Research";
-import { ServicesAdmin } from "./pages/Services";
+import { ArticlesAdmin } from "./pages/Articles";
 import { GithubSettingsAdmin } from "./pages/GithubSettings";
 import { MediaAdmin } from "./pages/Media";
 import { ResumeAdmin } from "./pages/Resume";
@@ -34,7 +34,7 @@ export function App() {
             <Route path="/experience" element={<ExperienceAdmin />} />
             <Route path="/projects" element={<ProjectsAdmin />} />
             <Route path="/research" element={<ResearchAdmin />} />
-            <Route path="/services" element={<ServicesAdmin />} />
+            <Route path="/articles" element={<ArticlesAdmin />} />
             <Route path="/github" element={<GithubSettingsAdmin />} />
             <Route path="/messages" element={<MessagesAdmin />} />
             <Route path="/media" element={<MediaAdmin />} />

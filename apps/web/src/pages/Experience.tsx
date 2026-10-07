@@ -1,39 +1,6 @@
 import { Container, SectionLabel, GlowCard, Loader, EmptyState } from "@nayeem/ui";
-import { useExperience } from "../hooks/useFirestoreData";
+import { useCertificates, useExperience } from "../hooks/useFirestoreData";
 import { formatDateRange } from "@nayeem/utils";
-
-export function Experience() {
-  const { data, loading } = useExperience();
-
-  return (
-    <Container className="py-24">
-      <SectionLabel index="02" label="Experience" className="mb-6" />
-      <h1 className="font-display text-4xl font-bold">Experience</h1>
-
-      <div className="mt-10 space-y-6">
-        {loading && <Loader label="LOADING EXPERIENCE..." />}
-        {!loading && (data ?? []).length === 0 && (
-          <EmptyState title="NO EXPERIENCE ENTRIES YET" hint="Add entries from the admin dashboard." />
-        )}
-        {(data ?? []).map((exp) => (
-          <GlowCard key={exp.id}>
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h3 className="font-display text-lg font-semibold">{exp.role} · {exp.organization}</h3>
-              <span className="font-mono text-xs text-foreground-muted">
-                {formatDateRange(exp.startDate, exp.endDate)}
-              </span>
-            </div>
-            <ul className="mt-3 list-inside list-disc space-y-1 text-sm text-foreground-muted">
-              {exp.responsibilities.map((r, i) => <li key={i}>{r}</li>)}
-            </ul>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {exp.technologies.map((t) => (
-                <span key={t} className="rounded-full border border-base-border px-3 py-1 font-mono text-[10px] text-foreground-muted">{t}</span>
-              ))}
-            </div>
-          </GlowCard>
-        ))}
-      </div>
-    </Container>
-  );
-}
+import { ExternalLink } from "lucide-react";
+export function Experience() { const { data, loading } = useExperience(); const { data: certificates } = useCertificates(); return <Container className="py-24"><SectionLabel index="02" label="Experience" className="mb-6"/><h1 className="font-display text-4xl font-bold">Experience</h1>{loading?<Loader label="LOADING EXPERIENCE…"/>:data?.length===0?<div className="mt-10"><EmptyState title="NO EXPERIENCE ENTRIES YET" hint="Add entries from the admin dashboard."/></div>:<div className="mt-10 space-y-6">{data?.map(exp=><GlowCard key={exp.id}><div className="flex flex-wrap items-baseline justify-between gap-2"><h3 className="font-display text-lg font-semibold">{exp.role} · {exp.organization}</h3><span className="font-mono text-xs text-foreground-muted">{formatDateRange(exp.startDate,exp.endDate)}</span></div><ul className="mt-3 list-inside list-disc space-y-1 text-sm text-foreground-muted">{exp.responsibilities.map((r,i)=><li key={i}>{r}</li>)}</ul><div className="mt-4 flex flex-wrap gap-2">{exp.technologies.map(t=><span key={t} className="rounded-full border border-base-border px-3 py-1 font-mono text-[10px] text-foreground-muted">{t}</span>)}</div></GlowCard>)}</div>}
+<section className="mt-20"><SectionLabel index="02.1" label="Certificates" className="mb-6"/><div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">{(certificates??[]).map(c=><GlowCard key={c.id} className="overflow-hidden p-0">{c.imageUrl&&<img src={c.imageUrl} alt={c.title} className="aspect-video w-full object-cover"/>}<div className="p-5"><h3 className="font-display font-semibold">{c.title}</h3><p className="mt-1 text-sm text-accent-cyan">{c.issuer}</p>{c.credentialUrl&&<a href={c.credentialUrl} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-xs text-accent-cyan">VERIFY <ExternalLink size={13}/></a>}</div></GlowCard>)}</div></section></Container>; }

@@ -1,45 +1,4 @@
 import { Container, SectionLabel, GlowCard, Loader, EmptyState, LinkButton } from "@nayeem/ui";
 import { useResearch } from "../hooks/useFirestoreData";
-
-export function Research() {
-  const { data, loading } = useResearch();
-
-  return (
-    <Container className="py-24">
-      <SectionLabel index="04" label="Research" className="mb-6" />
-      <h1 className="font-display text-4xl font-bold">Research</h1>
-
-      {loading && <Loader label="LOADING RESEARCH..." />}
-      {!loading && (data ?? []).length === 0 && (
-        <div className="mt-10">
-          <EmptyState title="NO RESEARCH ENTRIES YET" hint="Add research projects from the admin dashboard." />
-        </div>
-      )}
-
-      <div className="mt-10 space-y-6">
-        {(data ?? []).map((r) => (
-          <GlowCard key={r.id}>
-            <h2 className="font-display text-xl font-semibold">{r.title}</h2>
-            <p className="mt-2 text-sm text-foreground-muted">{r.abstract}</p>
-            <div className="mt-4 grid gap-3 text-sm text-foreground-muted sm:grid-cols-2">
-              {r.dataset && <p><span className="text-accent-cyan">Dataset:</span> {r.dataset}</p>}
-              {r.methodology && <p><span className="text-accent-cyan">Methodology:</span> {r.methodology}</p>}
-              {r.models && <p><span className="text-accent-cyan">Models:</span> {r.models.join(", ")}</p>}
-              {r.results && <p><span className="text-accent-cyan">Results:</span> {r.results}</p>}
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {r.technologies.map((t) => (
-                <span key={t} className="rounded-full border border-base-border px-3 py-1 font-mono text-[10px] text-foreground-muted">{t}</span>
-              ))}
-            </div>
-            {r.paperUrl && (
-              <LinkButton href={r.paperUrl} variant="ghost" target="_blank" rel="noreferrer" className="mt-4 inline-flex">
-                VIEW PAPER →
-              </LinkButton>
-            )}
-          </GlowCard>
-        ))}
-      </div>
-    </Container>
-  );
-}
+import { ExternalLink } from "lucide-react";
+export function Research(){const{data,loading}=useResearch();return <Container className="py-24"><SectionLabel index="04" label="Research" className="mb-6"/><h1 className="font-display text-4xl font-bold">Research</h1><p className="mt-3 max-w-3xl text-sm leading-6 text-foreground-muted">Applied research, experiments and papers exploring practical AI/ML systems, datasets, evaluation and deployable engineering.</p>{loading&&<Loader label="LOADING RESEARCH…"/>}{!loading&&!data?.length&&<div className="mt-10"><EmptyState title="NO RESEARCH ENTRIES YET" hint="Add papers from the admin dashboard."/></div>}<div className="mt-10 grid gap-6 md:grid-cols-2">{(data??[]).map(r=><GlowCard key={r.id} className="overflow-hidden p-0">{r.coverImage?.url&&<img src={r.coverImage.url} alt={r.title} className="aspect-[16/9] w-full object-cover"/>}<div className="p-6"><p className="font-mono text-[10px] tracking-[0.18em] text-accent-cyan">RESEARCH PAPER</p><h2 className="mt-2 font-display text-xl font-semibold">{r.title}</h2>{r.summary&&<p className="mt-3 text-sm text-foreground">{r.summary}</p>}<p className="mt-3 text-sm leading-6 text-foreground-muted">{r.abstract}</p><div className="mt-5 grid gap-3 text-sm text-foreground-muted sm:grid-cols-2">{r.dataset&&<p><span className="text-accent-cyan">Dataset:</span> {r.dataset}</p>}{r.methodology&&<p><span className="text-accent-cyan">Methodology:</span> {r.methodology}</p>}{r.models?.length&&<p><span className="text-accent-cyan">Models:</span> {r.models.join(", ")}</p>}{r.results&&<p><span className="text-accent-cyan">Results:</span> {r.results}</p>}</div><div className="mt-4 flex flex-wrap gap-2">{r.technologies.map(t=><span key={t} className="rounded-full border border-base-border px-3 py-1 font-mono text-[10px] text-foreground-muted">{t}</span>)}</div>{r.paperUrl&&<LinkButton href={r.paperUrl} variant="outline" target="_blank" rel="noreferrer" className="mt-5 inline-flex"><ExternalLink size={14}/> VIEW PAPER</LinkButton>}</div></GlowCard>)}</div></Container>}

@@ -9,11 +9,10 @@ const NAV_ITEMS = [
   { to: "/", label: "HOME" },
   { to: "/about", label: "ABOUT" },
   { to: "/experience", label: "EXPERIENCE" },
-  { to: "/skills", label: "SKILLS" },
   { to: "/projects", label: "PROJECTS" },
   { to: "/research", label: "RESEARCH" },
   { to: "/github", label: "GITHUB" },
-  { to: "/services", label: "SERVICES" },
+  { to: "/articles", label: "ARTICLES" },
   { to: "/contact", label: "CONTACT" },
 ];
 

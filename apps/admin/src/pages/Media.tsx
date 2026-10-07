@@ -1,21 +1,3 @@
-import { GlowCard } from "@nayeem/ui";
-
-/**
- * Scaffold page — follow the same CRUD pattern as pages/Projects.tsx
- * (getCollection -> local state -> form modal -> createDocument /
- * updateDocument / deleteDocument) once this collection's fields are
- * finalized. Collection name: see packages/firebase/src/collections.ts.
- */
-export function MediaAdmin() {
-  return (
-    <div>
-      <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">CMS</p>
-      <h1 className="mt-2 font-display text-3xl font-bold">Media</h1>
-      <GlowCard className="mt-8">
-        <p className="text-sm text-foreground-muted">
-          Scaffold ready — wire this page up using the same pattern as the Projects admin page.
-        </p>
-      </GlowCard>
-    </div>
-  );
-}
+import { CollectionAdminPage } from "../components/cms/CmsEditors";
+import { COLLECTIONS } from "@nayeem/firebase";
+export function MediaAdmin(){return <CollectionAdminPage title="Media" collection={COLLECTIONS.media} orderKey="uploadedAt" fields={[{key:"publicId",label:"Cloudinary Public ID"},{key:"url",label:"URL",type:"url"},{key:"filename",label:"Filename"},{key:"type",label:"Type",type:"select",options:["image","raw","video"]},{key:"usage",label:"Usage"},{key:"uploadedAt",label:"Uploaded At",type:"date"}]} defaults={{publicId:"",url:"",filename:"",type:"image",usage:"",uploadedAt:new Date().toISOString().slice(0,10)}}/>}

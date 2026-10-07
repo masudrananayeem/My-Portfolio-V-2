@@ -1,21 +1,6 @@
-import { GlowCard } from "@nayeem/ui";
+import { CollectionAdminPage } from "../components/cms/CmsEditors";
+import { COLLECTIONS } from "@nayeem/firebase";
 
-/**
- * Scaffold page — follow the same CRUD pattern as pages/Projects.tsx
- * (getCollection -> local state -> form modal -> createDocument /
- * updateDocument / deleteDocument) once this collection's fields are
- * finalized. Collection name: see packages/firebase/src/collections.ts.
- */
 export function ResearchAdmin() {
-  return (
-    <div>
-      <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">CMS</p>
-      <h1 className="mt-2 font-display text-3xl font-bold">Research</h1>
-      <GlowCard className="mt-8">
-        <p className="text-sm text-foreground-muted">
-          Scaffold ready — wire this page up using the same pattern as the Projects admin page.
-        </p>
-      </GlowCard>
-    </div>
-  );
+  return <CollectionAdminPage title="Research" collection={COLLECTIONS.research} fields={[{key:"slug",label:"Slug"},{key:"title",label:"Title"},{key:"summary",label:"Short Research Details",type:"textarea"},{key:"abstract",label:"Abstract",type:"textarea"},{key:"dataset",label:"Dataset"},{key:"methodology",label:"Methodology",type:"textarea"},{key:"models",label:"Models",type:"array"},{key:"results",label:"Results",type:"textarea"},{key:"technologies",label:"Technologies",type:"array"},{key:"paperUrl",label:"Paper URL",type:"url"},{key:"coverImage",label:"Paper Image",type:"image"},{key:"order",label:"Order",type:"number"}]} defaults={{slug:"",title:"",summary:"",abstract:"",dataset:"",methodology:"",models:[],results:"",technologies:[],paperUrl:"",coverImage:{url:"",publicId:""},order:0}} />;
 }

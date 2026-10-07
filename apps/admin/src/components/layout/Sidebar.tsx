@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { cn } from "@nayeem/utils";
 import {
   LayoutDashboard, User, FileText, Sparkles, Layers, Briefcase,
-  FolderKanban, FlaskConical, Wrench, Github, MessageSquare,
+  FolderKanban, FlaskConical, FileText as ArticleIcon, Github, MessageSquare,
   Image as ImageIcon, FileDown, Settings, LogOut,
 } from "lucide-react";
 import { useAuth } from "../auth/AuthProvider";
@@ -16,7 +16,7 @@ const ITEMS = [
   { to: "/experience", label: "Experience", icon: Briefcase },
   { to: "/projects", label: "Projects", icon: FolderKanban },
   { to: "/research", label: "Research", icon: FlaskConical },
-  { to: "/services", label: "Services", icon: Wrench },
+  { to: "/articles", label: "Articles", icon: ArticleIcon },
   { to: "/github", label: "GitHub", icon: Github },
   { to: "/messages", label: "Messages", icon: MessageSquare },
   { to: "/media", label: "Media", icon: ImageIcon },

@@ -1,166 +1,33 @@
 import { useEffect, useState } from "react";
-import {
-  getCollection, createDocument, updateDocument, deleteDocument, COLLECTIONS, orderBy,
-} from "@nayeem/firebase";
-import type { Project } from "@nayeem/types";
+import { getCollection, createDocument, updateDocument, deleteDocument, COLLECTIONS, orderBy } from "@nayeem/firebase";
+import type { Project, ProjectImage } from "@nayeem/types";
 import { slugify } from "@nayeem/utils";
 import { Button, GlowCard, Loader, EmptyState } from "@nayeem/ui";
-import { Plus, Pencil, Trash2, Star, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Star, X, ExternalLink, Github } from "lucide-react";
+import { CloudinaryUpload } from "../components/cms/CloudinaryUpload";
 
 type ProjectDoc = Project & { id: string };
+const emptyForm: Omit<Project, "id"> = { slug:"", title:"", description:"", longDescription:"", category:"Full Stack", year:new Date().getFullYear(), technologies:[], images:[], githubUrl:"", liveUrl:"", featured:false, order:0, status:"published", problem:"", solutionText:"", features:[], architecture:"", challenges:"", results:"" };
 
-const emptyForm: Omit<Project, "id"> = {
-  slug: "", title: "", description: "", longDescription: "", category: "Full Stack",
-  year: new Date().getFullYear(), technologies: [], images: [], githubUrl: "", liveUrl: "",
-  featured: false, order: 0, status: "published",
-};
-
-/**
- * Reference CRUD implementation — every other admin CMS page (Skills,
- * TechStack, Experience, Research, Services) follows this exact pattern:
- * getCollection -> local state, a form for create/edit, updateDocument /
- * createDocument on save, deleteDocument on delete.
- */
 export function ProjectsAdmin() {
   const [projects, setProjects] = useState<ProjectDoc[] | null>(null);
   const [editing, setEditing] = useState<ProjectDoc | Omit<Project, "id"> | null>(null);
   const [saving, setSaving] = useState(false);
+  const load = async () => setProjects(await getCollection<Project>(COLLECTIONS.projects, [orderBy("order", "asc")]));
+  useEffect(() => { void load(); }, []);
+  const save = async () => { if (!editing) return; setSaving(true); const payload = { ...editing, slug: editing.slug || slugify(editing.title) }; try { if ("id" in payload && payload.id) { const { id, ...rest } = payload; await updateDocument(COLLECTIONS.projects, id, rest); } else { const { id: _id, ...rest } = payload; await createDocument(COLLECTIONS.projects, rest); } setEditing(null); await load(); } finally { setSaving(false); } };
+  const remove = async (id: string) => { if (!confirm("Delete this project?")) return; await deleteDocument(COLLECTIONS.projects, id); await load(); };
+  const toggleFeatured = async (p: ProjectDoc) => { await updateDocument(COLLECTIONS.projects, p.id, { featured: !p.featured }); await load(); };
 
-  const load = async () => {
-    const data = await getCollection<Project>(COLLECTIONS.projects, [orderBy("order", "asc")]);
-    setProjects(data);
-  };
-
-  useEffect(() => { load(); }, []);
-
-  const save = async () => {
-    if (!editing) return;
-    setSaving(true);
-    const payload = { ...editing, slug: editing.slug || slugify(editing.title) };
-    try {
-      if ("id" in payload && payload.id) {
-        const { id, ...rest } = payload;
-        await updateDocument(COLLECTIONS.projects, id, rest);
-      } else {
-        await createDocument(COLLECTIONS.projects, payload);
-      }
-      setEditing(null);
-      await load();
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const remove = async (id: string) => {
-    if (!confirm("Delete this project?")) return;
-    await deleteDocument(COLLECTIONS.projects, id);
-    await load();
-  };
-
-  const toggleFeatured = async (p: ProjectDoc) => {
-    await updateDocument(COLLECTIONS.projects, p.id, { featured: !p.featured });
-    await load();
-  };
-
-  return (
-    <div>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">CMS</p>
-          <h1 className="mt-2 font-display text-3xl font-bold">Projects</h1>
-        </div>
-        <Button onClick={() => setEditing(emptyForm)}>
-          <Plus size={14} /> NEW PROJECT
-        </Button>
-      </div>
-
-      {!projects && <Loader label="LOADING PROJECTS..." />}
-      {projects && projects.length === 0 && (
-        <div className="mt-8">
-          <EmptyState title="NO PROJECTS YET" hint="Click 'New Project' to add your first one." />
-        </div>
-      )}
-
-      <div className="mt-8 space-y-3">
-        {(projects ?? []).map((p) => (
-          <GlowCard key={p.id} className="flex items-center justify-between gap-4">
-            <div>
-              <p className="font-display font-semibold">{p.title}</p>
-              <p className="font-mono text-[11px] text-foreground-muted">{p.category} · {p.year} · /{p.slug}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button onClick={() => toggleFeatured(p)} className={p.featured ? "text-accent-cyan" : "text-foreground-faint"} title="Toggle featured">
-                <Star size={16} fill={p.featured ? "currentColor" : "none"} />
-              </button>
-              <button onClick={() => setEditing(p)} className="text-foreground-muted hover:text-foreground" title="Edit">
-                <Pencil size={16} />
-              </button>
-              <button onClick={() => remove(p.id)} className="text-foreground-muted hover:text-red-400" title="Delete">
-                <Trash2 size={16} />
-              </button>
-            </div>
-          </GlowCard>
-        ))}
-      </div>
-
-      {editing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6">
-          <div className="max-h-[85vh] w-full max-w-xl overflow-y-auto rounded-xl border border-base-border bg-base-near p-6">
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-lg font-semibold">
-                {"id" in editing ? "Edit Project" : "New Project"}
-              </h2>
-              <button onClick={() => setEditing(null)}><X size={18} /></button>
-            </div>
-
-            <div className="mt-4 space-y-3">
-              <Field label="Title" value={editing.title} onChange={(v) => setEditing({ ...editing, title: v })} />
-              <Field label="Slug (auto if blank)" value={editing.slug} onChange={(v) => setEditing({ ...editing, slug: v })} />
-              <Field label="Category" value={editing.category} onChange={(v) => setEditing({ ...editing, category: v })} />
-              <Field label="Year" value={String(editing.year)} onChange={(v) => setEditing({ ...editing, year: Number(v) || editing.year })} />
-              <Field label="Description" value={editing.description} onChange={(v) => setEditing({ ...editing, description: v })} textarea />
-              <Field
-                label="Technologies (comma separated)"
-                value={editing.technologies.join(", ")}
-                onChange={(v) => setEditing({ ...editing, technologies: v.split(",").map((t) => t.trim()).filter(Boolean) })}
-              />
-              <Field label="GitHub URL" value={editing.githubUrl ?? ""} onChange={(v) => setEditing({ ...editing, githubUrl: v })} />
-              <Field label="Live URL" value={editing.liveUrl ?? ""} onChange={(v) => setEditing({ ...editing, liveUrl: v })} />
-              {/* Image upload: wire to Cloudinary unsigned upload widget/API here,
-                  then push { url, publicId } into editing.images */}
-            </div>
-
-            <div className="mt-6 flex justify-end gap-3">
-              <Button variant="ghost" onClick={() => setEditing(null)}>CANCEL</Button>
-              <Button onClick={save} disabled={saving}>{saving ? "SAVING..." : "SAVE"}</Button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  return <div><div className="flex flex-wrap items-center justify-between gap-4"><div><p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">CMS / WORK</p><h1 className="mt-2 font-display text-3xl font-bold">Projects</h1><p className="mt-1 text-sm text-foreground-muted">Manage the 3-column project cards and full project detail pages.</p></div><Button onClick={() => setEditing(emptyForm)}><Plus size={14}/> NEW PROJECT</Button></div>
+    {!projects && <Loader label="LOADING PROJECTS…" />}{projects?.length === 0 && <div className="mt-8"><EmptyState title="NO PROJECTS YET" /></div>}
+    <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{(projects ?? []).map((p) => <GlowCard key={p.id}>{p.images?.[0]?.url && <img src={p.images[0].url} alt={p.images[0].alt ?? p.title} className="mb-4 aspect-video w-full rounded-lg object-cover" />}<div className="flex items-start justify-between gap-3"><div><p className="font-semibold">{p.title}</p><p className="mt-1 text-xs text-foreground-muted">{p.category} · {p.year}</p></div><div className="flex gap-2"><button onClick={() => toggleFeatured(p)} className={p.featured ? "text-accent-cyan" : "text-foreground-faint"}><Star size={15} fill={p.featured ? "currentColor" : "none"}/></button><button onClick={() => setEditing(p)}><Pencil size={15}/></button><button onClick={() => void remove(p.id)} className="text-red-400"><Trash2 size={15}/></button></div></div><div className="mt-4 flex gap-3">{p.githubUrl && <a href={p.githubUrl} target="_blank" rel="noreferrer" className="text-xs text-foreground-muted hover:text-accent-cyan"><Github size={14}/></a>}{p.liveUrl && <a href={p.liveUrl} target="_blank" rel="noreferrer" className="text-xs text-foreground-muted hover:text-accent-cyan"><ExternalLink size={14}/></a>}</div></GlowCard>)}</div>
+    {editing && <ProjectModal value={editing} setValue={setEditing} onClose={() => setEditing(null)} onSave={() => void save()} saving={saving}/>}</div>;
 }
 
-function Field({
-  label, value, onChange, textarea = false,
-}: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean }) {
-  return (
-    <div>
-      <label className="font-mono text-[11px] tracking-widest text-foreground-muted">{label.toUpperCase()}</label>
-      {textarea ? (
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          rows={3}
-          className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm outline-none focus:border-accent-cyan"
-        />
-      ) : (
-        <input
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm outline-none focus:border-accent-cyan"
-        />
-      )}
-    </div>
-  );
+function ProjectModal({ value, setValue, onClose, onSave, saving }: { value:any; setValue:(v:any)=>void; onClose:()=>void; onSave:()=>void; saving:boolean }) {
+  const images: ProjectImage[] = value.images ?? [];
+  const setImage = (result:{url:string;publicId:string}) => setValue({ ...value, images: [{ ...result, alt: value.title || "Project image" }] });
+  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"><div className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-xl border border-base-border bg-base-near p-6"><div className="flex items-center justify-between"><h2 className="font-display text-lg font-semibold">{"id" in value ? "Edit Project" : "New Project"}</h2><button onClick={onClose}><X size={18}/></button></div><div className="mt-5 grid gap-4 sm:grid-cols-2"><Input label="Title" value={value.title} onChange={(v)=>setValue({...value,title:v})}/><Input label="Slug" value={value.slug} onChange={(v)=>setValue({...value,slug:v})}/><Input label="Category" value={value.category} onChange={(v)=>setValue({...value,category:v})}/><Input label="Year" value={String(value.year)} onChange={(v)=>setValue({...value,year:Number(v)||new Date().getFullYear()})}/><Input label="GitHub URL" value={value.githubUrl??""} onChange={(v)=>setValue({...value,githubUrl:v})}/><Input label="Live URL" value={value.liveUrl??""} onChange={(v)=>setValue({...value,liveUrl:v})}/><div className="sm:col-span-2"><Input label="Short Description" value={value.description} onChange={(v)=>setValue({...value,description:v})} textarea/></div><div className="sm:col-span-2"><Input label="Full Project Details" value={value.longDescription??""} onChange={(v)=>setValue({...value,longDescription:v})} textarea/></div><div className="sm:col-span-2"><CloudinaryUpload value={images[0]?.url} label="Project picture" folder="portfolio/projects" onChange={setImage}/></div><div className="sm:col-span-2"><Input label="Technologies (one per line)" value={(value.technologies??[]).join("\n")} onChange={(v)=>setValue({...value,technologies:v.split("\n").map((x:string)=>x.trim()).filter(Boolean)})} textarea/></div><div className="sm:col-span-2"><Input label="Features (one per line)" value={(value.features??[]).join("\n")} onChange={(v)=>setValue({...value,features:v.split("\n").map((x:string)=>x.trim()).filter(Boolean)})} textarea/></div><Input label="Problem" value={value.problem??""} onChange={(v)=>setValue({...value,problem:v})} textarea/><Input label="Solution" value={value.solutionText??""} onChange={(v)=>setValue({...value,solutionText:v})} textarea/><Input label="Architecture" value={value.architecture??""} onChange={(v)=>setValue({...value,architecture:v})} textarea/><Input label="Challenges" value={value.challenges??""} onChange={(v)=>setValue({...value,challenges:v})} textarea/><Input label="Results" value={value.results??""} onChange={(v)=>setValue({...value,results:v})} textarea/><Input label="Order" value={String(value.order)} onChange={(v)=>setValue({...value,order:Number(v)||0})}/><label className="flex items-center gap-2"><input type="checkbox" checked={Boolean(value.featured)} onChange={(e)=>setValue({...value,featured:e.target.checked})}/> Featured project</label><label className="block"><span className="font-mono text-[10px] text-foreground-muted">STATUS</span><select value={value.status} onChange={(e)=>setValue({...value,status:e.target.value})} className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm"><option value="published">published</option><option value="draft">draft</option></select></label></div><div className="mt-6 flex justify-end gap-3"><Button variant="ghost" onClick={onClose}>CANCEL</Button><Button onClick={onSave} disabled={saving}>{saving?"SAVING…":"SAVE PROJECT"}</Button></div></div></div>;
 }
+function Input({label,value,onChange,textarea=false}:{label:string;value:string;onChange:(v:string)=>void;textarea?:boolean}){return <label className="block"><span className="font-mono text-[10px] tracking-widest text-foreground-muted">{label.toUpperCase()}</span>{textarea?<textarea rows={4} value={value} onChange={e=>onChange(e.target.value)} className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm"/>:<input value={value} onChange={e=>onChange(e.target.value)} className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm"/>}</label>}

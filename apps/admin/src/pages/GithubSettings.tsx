@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Github, Save, RefreshCw } from "lucide-react";
 import { GlowCard, Button } from "@nayeem/ui";
-import { COLLECTIONS, getDocument, updateDocument } from "@nayeem/firebase";
+import { COLLECTIONS, getDocument, setDocument } from "@nayeem/firebase";
 import type { GithubSettings } from "@nayeem/types";
 
 const defaults: GithubSettings = {
@@ -34,7 +34,7 @@ export function GithubSettingsAdmin() {
     setSaving(true);
     setMessage("");
     try {
-      await updateDocument(COLLECTIONS.github, "settings", form);
+      await setDocument(COLLECTIONS.github, "settings", form);
       setMessage("GitHub settings saved successfully.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Failed to save settings.");

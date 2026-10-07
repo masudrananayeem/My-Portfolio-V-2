@@ -1,21 +1,3 @@
-import { GlowCard } from "@nayeem/ui";
-
-/**
- * Scaffold page — follow the same CRUD pattern as pages/Projects.tsx
- * (getCollection -> local state -> form modal -> createDocument /
- * updateDocument / deleteDocument) once this collection's fields are
- * finalized. Collection name: see packages/firebase/src/collections.ts.
- */
-export function SkillsAdmin() {
-  return (
-    <div>
-      <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">CMS</p>
-      <h1 className="mt-2 font-display text-3xl font-bold">Skills</h1>
-      <GlowCard className="mt-8">
-        <p className="text-sm text-foreground-muted">
-          Scaffold ready — wire this page up using the same pattern as the Projects admin page.
-        </p>
-      </GlowCard>
-    </div>
-  );
-}
+import { CollectionAdminPage } from "../components/cms/CmsEditors";
+import { COLLECTIONS } from "@nayeem/firebase";
+export function SkillsAdmin() { return <CollectionAdminPage title="Skills" collection={COLLECTIONS.skills} fields={[{key:"name",label:"Name"},{key:"category",label:"Category",type:"select",options:["frontend","backend","database","cloud","devops","ai-ml","tools","architecture"]},{key:"icon",label:"Icon / Icon Name"},{key:"order",label:"Order",type:"number"}]} defaults={{name:"",category:"frontend",icon:"",order:0}} />; }

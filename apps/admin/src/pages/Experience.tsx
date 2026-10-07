@@ -1,21 +1,41 @@
-import { GlowCard } from "@nayeem/ui";
+import { useEffect, useState, type ReactNode } from "react";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Button, GlowCard, EmptyState, Loader } from "@nayeem/ui";
+import { COLLECTIONS, createDocument, deleteDocument, getCollection, orderBy, updateDocument } from "@nayeem/firebase";
+import type { Certificate, ExperienceItem } from "@nayeem/types";
+import { CloudinaryUpload } from "../components/cms/CloudinaryUpload";
+import { formatDateRange } from "@nayeem/utils";
 
-/**
- * Scaffold page — follow the same CRUD pattern as pages/Projects.tsx
- * (getCollection -> local state -> form modal -> createDocument /
- * updateDocument / deleteDocument) once this collection's fields are
- * finalized. Collection name: see packages/firebase/src/collections.ts.
- */
+type ExpDoc = ExperienceItem & { id: string };
+type CertDoc = Certificate & { id: string };
+const emptyExp: Omit<ExperienceItem, "id"> = { organization: "", role: "", startDate: "", endDate: null, responsibilities: [], technologies: [], achievements: [], order: 0 };
+const emptyCert: Omit<Certificate, "id"> = { title: "", issuer: "", issueDate: "", credentialId: "", credentialUrl: "", imageUrl: "", publicId: "", description: "", order: 0 };
+
 export function ExperienceAdmin() {
-  return (
-    <div>
-      <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">CMS</p>
-      <h1 className="mt-2 font-display text-3xl font-bold">Experience</h1>
-      <GlowCard className="mt-8">
-        <p className="text-sm text-foreground-muted">
-          Scaffold ready — wire this page up using the same pattern as the Projects admin page.
-        </p>
-      </GlowCard>
-    </div>
-  );
+  const [experiences, setExperiences] = useState<ExpDoc[] | null>(null);
+  const [certificates, setCertificates] = useState<CertDoc[] | null>(null);
+  const [editingExp, setEditingExp] = useState<ExpDoc | Omit<ExperienceItem, "id"> | null>(null);
+  const [editingCert, setEditingCert] = useState<CertDoc | Omit<Certificate, "id"> | null>(null);
+
+  const load = async () => { setExperiences(await getCollection<ExperienceItem>(COLLECTIONS.experience, [orderBy("order", "asc")])); setCertificates(await getCollection<Certificate>(COLLECTIONS.certificates, [orderBy("order", "asc")])); };
+  useEffect(() => { void load(); }, []);
+
+  const saveExp = async () => { if (!editingExp) return; const p = { ...editingExp, endDate: editingExp.endDate || null }; if ("id" in p && p.id) { const { id, ...rest } = p; await updateDocument(COLLECTIONS.experience, id, rest); } else { await createDocument(COLLECTIONS.experience, p); } setEditingExp(null); await load(); };
+  const saveCert = async () => { if (!editingCert) return; if ("id" in editingCert && editingCert.id) { const { id, ...rest } = editingCert; await updateDocument(COLLECTIONS.certificates, id, rest); } else { await createDocument(COLLECTIONS.certificates, editingCert); } setEditingCert(null); await load(); };
+  const remove = async (collection: string, id: string) => { if (!confirm("Delete this item?")) return; await deleteDocument(collection, id); await load(); };
+
+  return <div>
+    <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">CMS / CAREER</p><h1 className="mt-2 font-display text-3xl font-bold">Experience & Certificates</h1><p className="mt-1 text-sm text-foreground-muted">Manage the career timeline and certificates shown inside the About/Experience areas.</p>
+    <section className="mt-8"><div className="flex items-center justify-between"><h2 className="font-display text-xl font-semibold">Experience</h2><Button onClick={() => setEditingExp(emptyExp)}><Plus size={14} /> NEW EXPERIENCE</Button></div>{!experiences ? <Loader label="LOADING EXPERIENCE…" /> : experiences.length === 0 ? <div className="mt-5"><EmptyState title="NO EXPERIENCE YET" /></div> : <div className="mt-5 space-y-3">{experiences.map((e) => <GlowCard key={e.id} className="flex items-start justify-between gap-4"><div><p className="font-semibold">{e.role} · {e.organization}</p><p className="mt-1 text-xs text-foreground-muted">{formatDateRange(e.startDate, e.endDate)}</p><p className="mt-2 text-sm text-foreground-muted">{e.responsibilities[0] ?? "Experience entry"}</p></div><div className="flex gap-3"><button onClick={() => setEditingExp(e)}><Pencil size={16} /></button><button onClick={() => void remove(COLLECTIONS.experience, e.id)} className="text-red-400"><Trash2 size={16} /></button></div></GlowCard>)}</div>}</section>
+    <section className="mt-12"><div className="flex items-center justify-between"><div><h2 className="font-display text-xl font-semibold">Certificates</h2><p className="mt-1 text-sm text-foreground-muted">Upload certificate images and add credential details.</p></div><Button onClick={() => setEditingCert(emptyCert)}><Plus size={14} /> NEW CERTIFICATE</Button></div>{!certificates ? <Loader label="LOADING CERTIFICATES…" /> : <div className="mt-5 grid gap-5 md:grid-cols-2">{certificates.map((c) => <GlowCard key={c.id}>{c.imageUrl && <img src={c.imageUrl} alt={c.title} className="mb-4 aspect-video w-full rounded-lg object-cover" />}<div className="flex justify-between gap-3"><div><p className="font-semibold">{c.title}</p><p className="text-sm text-foreground-muted">{c.issuer}{c.issueDate ? ` · ${c.issueDate}` : ""}</p></div><div className="flex gap-3"><button onClick={() => setEditingCert(c)}><Pencil size={16} /></button><button onClick={() => void remove(COLLECTIONS.certificates, c.id)} className="text-red-400"><Trash2 size={16} /></button></div></div></GlowCard>)}</div>}</section>
+    {editingExp && <ExperienceModal value={editingExp} onChange={setEditingExp} onClose={() => setEditingExp(null)} onSave={() => void saveExp()} />}
+    {editingCert && <CertificateModal value={editingCert} onChange={setEditingCert} onClose={() => setEditingCert(null)} onSave={() => void saveCert()} />}
+  </div>;
 }
+
+function Input({ label, value, onChange, textarea = false }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean }) { return <label className="block"><span className="font-mono text-[10px] tracking-widest text-foreground-muted">{label.toUpperCase()}</span>{textarea ? <textarea rows={4} value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm" /> : <input value={value} onChange={(e) => onChange(e.target.value)} className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm" />}</label>; }
+function ListInput({ label, value, onChange }: { label: string; value: string[]; onChange: (v: string[]) => void }) { return <Input label={label} value={value.join("\n")} onChange={(v) => onChange(v.split("\n").map((x) => x.trim()).filter(Boolean))} textarea />; }
+
+function ExperienceModal({ value, onChange, onClose, onSave }: { value: any; onChange: (v: any) => void; onClose: () => void; onSave: () => void }) { return <Modal title="Experience" onClose={onClose} onSave={onSave}><div className="grid gap-4 sm:grid-cols-2"><Input label="Organization" value={value.organization} onChange={(v) => onChange({ ...value, organization: v })} /><Input label="Role" value={value.role} onChange={(v) => onChange({ ...value, role: v })} /><Input label="Start Date" value={value.startDate} onChange={(v) => onChange({ ...value, startDate: v })} /><Input label="End Date" value={value.endDate ?? ""} onChange={(v) => onChange({ ...value, endDate: v || null })} /><div className="sm:col-span-2"><ListInput label="Responsibilities" value={value.responsibilities} onChange={(v) => onChange({ ...value, responsibilities: v })} /></div><div className="sm:col-span-2"><ListInput label="Technologies" value={value.technologies} onChange={(v) => onChange({ ...value, technologies: v })} /></div><div className="sm:col-span-2"><ListInput label="Achievements" value={value.achievements} onChange={(v) => onChange({ ...value, achievements: v })} /></div><Input label="Order" value={String(value.order)} onChange={(v) => onChange({ ...value, order: Number(v) || 0 })} /></div></Modal>; }
+function CertificateModal({ value, onChange, onClose, onSave }: { value: any; onChange: (v: any) => void; onClose: () => void; onSave: () => void }) { return <Modal title="Certificate" onClose={onClose} onSave={onSave}><div className="space-y-4"><Input label="Title" value={value.title} onChange={(v) => onChange({ ...value, title: v })} /><Input label="Issuer" value={value.issuer} onChange={(v) => onChange({ ...value, issuer: v })} /><Input label="Issue Date" value={value.issueDate ?? ""} onChange={(v) => onChange({ ...value, issueDate: v })} /><Input label="Credential ID" value={value.credentialId ?? ""} onChange={(v) => onChange({ ...value, credentialId: v })} /><Input label="Credential URL" value={value.credentialUrl ?? ""} onChange={(v) => onChange({ ...value, credentialUrl: v })} /><Input label="Description" value={value.description ?? ""} onChange={(v) => onChange({ ...value, description: v })} textarea /><CloudinaryUpload value={value.imageUrl} label="Certificate image" folder="portfolio/certificates" onChange={({ url, publicId }) => onChange({ ...value, imageUrl: url, publicId })} /><Input label="Order" value={String(value.order)} onChange={(v) => onChange({ ...value, order: Number(v) || 0 })} /></div></Modal>; }
+function Modal({ title, children, onClose, onSave }: { title: string; children: ReactNode; onClose: () => void; onSave: () => void }) { return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"><div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl border border-base-border bg-base-near p-6"><div className="flex items-center justify-between"><h2 className="font-display text-lg font-semibold">{title}</h2><button onClick={onClose}><X size={18} /></button></div><div className="mt-5">{children}</div><div className="mt-6 flex justify-end gap-3"><Button variant="ghost" onClick={onClose}>CANCEL</Button><Button onClick={onSave}>SAVE</Button></div></div></div>; }

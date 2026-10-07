@@ -1,21 +1,41 @@
-import { GlowCard } from "@nayeem/ui";
+import { SingleDocumentAdminPage } from "../components/cms/CmsEditors";
+import { COLLECTIONS } from "@nayeem/firebase";
 
-/**
- * Scaffold page — follow the same CRUD pattern as pages/Projects.tsx
- * (getCollection -> local state -> form modal -> createDocument /
- * updateDocument / deleteDocument) once this collection's fields are
- * finalized. Collection name: see packages/firebase/src/collections.ts.
- */
 export function AboutAdmin() {
-  return (
-    <div>
-      <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">CMS</p>
-      <h1 className="mt-2 font-display text-3xl font-bold">About</h1>
-      <GlowCard className="mt-8">
-        <p className="text-sm text-foreground-muted">
-          Scaffold ready — wire this page up using the same pattern as the Projects admin page.
-        </p>
-      </GlowCard>
-    </div>
-  );
+  return <SingleDocumentAdminPage
+    title="About"
+    collection={COLLECTIONS.about}
+    docId="main"
+    fields={[
+      { key: "eyebrow", label: "Eyebrow" },
+      { key: "title", label: "Title" },
+      { key: "intro", label: "Intro", type: "textarea" },
+      { key: "body", label: "Full About Details", type: "textarea", help: "Long-form story shown in the public About section." },
+      { key: "highlights", label: "Highlights", type: "array", help: "One highlight per line." },
+      { key: "codingProfiles.beecrowd.platform", label: "beecrowd Platform" },
+      { key: "codingProfiles.beecrowd.handle", label: "beecrowd Profile ID" },
+      { key: "codingProfiles.beecrowd.url", label: "beecrowd Profile URL", type: "url" },
+      { key: "codingProfiles.beecrowd.solved", label: "beecrowd Solved", type: "number" },
+      { key: "codingProfiles.codeforces.platform", label: "Codeforces Platform" },
+      { key: "codingProfiles.codeforces.handle", label: "Codeforces Handle" },
+      { key: "codingProfiles.codeforces.url", label: "Codeforces Profile URL", type: "url" },
+      { key: "codingProfiles.codeforces.solved", label: "Codeforces Solved", type: "number" },
+      { key: "codingProfiles.codechef.platform", label: "CodeChef Platform" },
+      { key: "codingProfiles.codechef.handle", label: "CodeChef Handle" },
+      { key: "codingProfiles.codechef.url", label: "CodeChef Profile URL", type: "url" },
+      { key: "codingProfiles.codechef.solved", label: "CodeChef Solved", type: "number" },
+    ]}
+    defaults={{
+      eyebrow: "ABOUT",
+      title: "Building useful digital systems",
+      intro: "",
+      body: "",
+      highlights: [],
+      codingProfiles: {
+        beecrowd: { platform: "beecrowd", handle: "779446", url: "https://judge.beecrowd.com/en/profile/779446", solved: 73 },
+        codeforces: { platform: "Codeforces", handle: "codeforcemasud", url: "https://codeforces.com/profile/codeforcemasud", solved: 40 },
+        codechef: { platform: "CodeChef", handle: "codechefmasud", url: "https://www.codechef.com/users/codechefmasud", solved: 207 },
+      },
+    }}
+  />;
 }

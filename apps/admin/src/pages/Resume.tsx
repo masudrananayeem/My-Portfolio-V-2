@@ -1,21 +1,3 @@
-import { GlowCard } from "@nayeem/ui";
-
-/**
- * Scaffold page — follow the same CRUD pattern as pages/Projects.tsx
- * (getCollection -> local state -> form modal -> createDocument /
- * updateDocument / deleteDocument) once this collection's fields are
- * finalized. Collection name: see packages/firebase/src/collections.ts.
- */
-export function ResumeAdmin() {
-  return (
-    <div>
-      <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">CMS</p>
-      <h1 className="mt-2 font-display text-3xl font-bold">Resume</h1>
-      <GlowCard className="mt-8">
-        <p className="text-sm text-foreground-muted">
-          Scaffold ready — wire this page up using the same pattern as the Projects admin page.
-        </p>
-      </GlowCard>
-    </div>
-  );
-}
+import { SingleDocumentAdminPage } from "../components/cms/CmsEditors";
+import { COLLECTIONS } from "@nayeem/firebase";
+export function ResumeAdmin() { return <SingleDocumentAdminPage title="Resume" collection={COLLECTIONS.profile} docId="main" fields={[{key:"resumeUrl",label:"Resume PDF URL",type:"url",help:"Use a Cloudinary URL or /resume.pdf for the public portfolio."},{key:"name",label:"Candidate Name"},{key:"role",label:"Headline"},{key:"education",label:"Education"},{key:"university",label:"University"}]} defaults={{resumeUrl:"/resume.pdf",name:"Masud Rana Nayeem",role:"Full Stack Developer",education:"B.Sc. CSE",university:"DIU"}} />; }

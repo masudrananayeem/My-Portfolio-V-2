@@ -21,7 +21,7 @@ export function Hero() {
     return () => { intro.kill(); };
   }, []);
 
-  const name = "MASUD RANA NAYEEM";
+  const name = (profile?.name ?? "Masud Rana Nayeem").toUpperCase();
   const avatarUrl = profile?.avatarUrl || "/profile-hero.png";
   const roles = profile?.roles ?? ["FULL STACK DEVELOPER", "AI / ML ENTHUSIAST", "RESEARCHER"];
 

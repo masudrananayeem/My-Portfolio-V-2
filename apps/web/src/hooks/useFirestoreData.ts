@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { getCollection, getDocument, COLLECTIONS, orderBy } from "@nayeem/firebase";
+import { getCollection, getDocument, COLLECTIONS, orderBy, where } from "@nayeem/firebase";
 import type { DocumentData } from "@nayeem/firebase";
 import type {
-  Profile, Skill, TechStackItem, ExperienceItem, Project,
+  Profile, AboutContent, Skill, TechStackItem, ExperienceItem, Certificate, Project, Article,
   ResearchProject, Service, GithubSettings, SiteSettings,
 } from "@nayeem/types";
 
@@ -41,12 +41,22 @@ function useOrderedCollection<T extends DocumentData>(collectionName: string): A
 }
 
 export const useProfile = () => useDocument<Profile>(COLLECTIONS.profile, "main");
+export const useAbout = () => useDocument<AboutContent>(COLLECTIONS.about, "main");
 export const useSkills = () => useOrderedCollection<Skill>(COLLECTIONS.skills);
 export const useTechStack = () => useOrderedCollection<TechStackItem>(COLLECTIONS.techStack);
 export const useExperience = () => useOrderedCollection<ExperienceItem>(COLLECTIONS.experience);
-export const useProjects = () => useOrderedCollection<Project>(COLLECTIONS.projects);
+export const useCertificates = () => useOrderedCollection<Certificate>(COLLECTIONS.certificates);
+export function useProjects() {
+  const [state, setState] = useState<AsyncState<Project[]>>({ data: null, loading: true, error: null });
+  useEffect(() => { let active = true; getCollection<Project>(COLLECTIONS.projects, [where("status", "==", "published")]).then((items) => active && setState({ data: items.sort((a,b)=>(a.order??0)-(b.order??0)), loading:false, error:null })).catch((e) => active && setState({data:null,loading:false,error:e.message})); return () => { active=false; }; }, []);
+  return state;
+}
+export function useArticles() {
+  const [state, setState] = useState<AsyncState<Article[]>>({ data: null, loading: true, error: null });
+  useEffect(() => { let active = true; getCollection<Article>(COLLECTIONS.articles, [where("status", "==", "published")]).then((items) => active && setState({ data: items.sort((a,b)=>(a.order??0)-(b.order??0)), loading:false, error:null })).catch((e) => active && setState({data:null,loading:false,error:e.message})); return () => { active=false; }; }, []);
+  return state;
+}
 export const useResearch = () => useOrderedCollection<ResearchProject>(COLLECTIONS.research);
-export const useServices = () => useOrderedCollection<Service>(COLLECTIONS.services);
 export const useGithubSettings = () => useDocument<GithubSettings>(COLLECTIONS.github, "settings");
 export const useSiteSettings = () => useDocument<SiteSettings>(COLLECTIONS.settings, "main");
 

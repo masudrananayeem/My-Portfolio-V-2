@@ -5,6 +5,7 @@ import {
   getDocs,
   addDoc,
   updateDoc,
+  setDoc,
   deleteDoc,
   query,
   orderBy,
@@ -24,11 +25,7 @@ export async function getCollection<T extends DocumentData>(
   return snap.docs.map((d) => ({ id: d.id, ...(d.data() as T) }));
 }
 
-/** Generic: fetch one document by id. */
-export async function getDocument<T extends DocumentData>(
-  name: string,
-  id: string
-): Promise<(T & { id: string }) | null> {
+export async function getDocument<T extends DocumentData>(name: string, id: string): Promise<(T & { id: string }) | null> {
   const ref = doc(db, name, id);
   const snap = await getDoc(ref);
   return snap.exists() ? { id: snap.id, ...(snap.data() as T) } : null;
@@ -38,12 +35,13 @@ export async function createDocument<T extends DocumentData>(name: string, data:
   return addDoc(collection(db, name), data);
 }
 
-export async function updateDocument<T extends Partial<DocumentData>>(
-  name: string,
-  id: string,
-  data: T
-) {
+export async function updateDocument<T extends Partial<DocumentData>>(name: string, id: string, data: T) {
   return updateDoc(doc(db, name, id), data);
+}
+
+/** Create or fully replace a known document id. Useful for singleton CMS documents. */
+export async function setDocument<T extends DocumentData>(name: string, id: string, data: T) {
+  return setDoc(doc(db, name, id), data, { merge: true });
 }
 
 export async function deleteDocument(name: string, id: string) {

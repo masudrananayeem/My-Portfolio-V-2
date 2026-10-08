@@ -1,56 +1,78 @@
-// ============================================================
-// Shared domain types — used by apps/web, apps/admin, and the
-// Cloudflare Worker backend. Keep this the single source of
-// truth for Firestore document shapes.
-// ============================================================
+// Shared domain types — single source of truth for the web and admin apps.
 
 export interface Profile {
   name: string;
   role: string;
-  roles: string[]; // e.g. ["Software Engineer", "AI/ML Enthusiast", "Researcher"]
+  roles: string[];
   tagline: string;
   bio: string;
   education: string;
   university: string;
-  avatarUrl: string; // Cloudinary URL
-  resumeUrl: string; // Cloudinary URL
+  avatarUrl: string;
+  resumeUrl: string;
   location?: string;
   availableForWork: boolean;
 }
 
-export type SkillCategory =
-  | "frontend"
-  | "backend"
-  | "database"
-  | "cloud"
-  | "devops"
-  | "ai-ml"
-  | "tools"
-  | "architecture";
-
-export interface Skill {
-  id: string;
-  name: string;
-  category: SkillCategory;
-  icon?: string;
-  order: number;
+export interface CodingProfile {
+  platform: string;
+  handle: string;
+  url: string;
+  solved: number;
+  accent?: string;
 }
 
-export interface TechStackItem {
+export interface EducationItem {
+  degree: string;
+  institution: string;
+  period: string;
+  result?: string;
+}
+
+export interface AboutContent {
+  eyebrow: string;
+  title: string;
+  intro: string;
+  body: string;
+  highlights: string[];
+  education?: EducationItem[];
+  bioDetails?: {
+    shortDegree?: string;
+    availability?: string;
+    email?: string;
+    phone?: string;
+  };
+  codingProfiles?: {
+    beecrowd?: CodingProfile;
+    codeforces?: CodingProfile;
+    codechef?: CodingProfile;
+  };
+  order?: number;
+}
+
+export type SkillCategory = "languages" | "frontend" | "backend" | "database" | "cloud" | "devops" | "ai-ml" | "data" | "testing" | "security" | "tools" | "architecture" | "mobile";
+export interface Skill { id: string; name: string; category: SkillCategory; icon?: string; order: number; }
+export interface TechStackItem { id: string; name: string; icon?: string; row: 1 | 2; order: number; enabled: boolean; }
+
+export interface Certificate {
   id: string;
-  name: string;
-  icon?: string;
-  row: 1 | 2; // marquee row 1 = left, row 2 = right
+  title: string;
+  issuer: string;
+  issueDate?: string;
+  credentialId?: string;
+  credentialUrl?: string;
+  imageUrl?: string;
+  publicId?: string;
+  description?: string;
   order: number;
-  enabled: boolean;
 }
 
 export interface ExperienceItem {
   id: string;
   organization: string;
   role: string;
-  startDate: string; // ISO
-  endDate: string | null; // null = present
+  startDate: string;
+  endDate: string | null;
   responsibilities: string[];
   technologies: string[];
   achievements: string[];
@@ -58,20 +80,14 @@ export interface ExperienceItem {
 }
 
 export type ProjectStatus = "draft" | "published";
-
-export interface ProjectImage {
-  url: string;
-  publicId: string;
-  alt?: string;
-}
-
+export interface ProjectImage { url: string; publicId: string; alt?: string; }
 export interface Project {
   id: string;
   slug: string;
   title: string;
-  description: string; // short
+  description: string;
   longDescription?: string;
-  category: string; // e.g. "Full Stack", "Frontend", "AI/ML"
+  category: string;
   year: number;
   technologies: string[];
   images: ProjectImage[];
@@ -80,7 +96,6 @@ export interface Project {
   featured: boolean;
   order: number;
   status: ProjectStatus;
-  // Detail-page fields
   problem?: string;
   solutionText?: string;
   features?: string[];
@@ -89,11 +104,28 @@ export interface Project {
   results?: string;
 }
 
+export interface Article {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImage?: ProjectImage;
+  category: string;
+  publishedAt: string;
+  readingTime?: string;
+  featured: boolean;
+  order: number;
+  status: ProjectStatus;
+}
+
 export interface ResearchProject {
   id: string;
   slug: string;
   title: string;
   abstract: string;
+  summary?: string;
+  coverImage?: ProjectImage;
   dataset?: string;
   methodology?: string;
   models?: string[];
@@ -103,63 +135,11 @@ export interface ResearchProject {
   order: number;
 }
 
-export interface Service {
-  id: string;
-  title: string;
-  description: string;
-  icon?: string;
-  order: number;
-}
-
+export interface Service { id: string; title: string; description: string; icon?: string; order: number; }
 export type MessageStatus = "unread" | "read" | "archived" | "deleted";
-
-export interface ContactMessage {
-  id: string;
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  status: MessageStatus;
-  createdAt: string; // ISO
-}
-
-export interface GithubSettings {
-  username: string;
-  profileUrl: string;
-  showContributions: boolean;
-  showRepoStats: boolean;
-  cachedContributionCount?: number;
-  cachedAt?: string;
-}
-
-export interface SocialLinks {
-  github?: string;
-  linkedin?: string;
-  facebook?: string;
-  email?: string;
-  other?: { label: string; url: string }[];
-}
-
-export interface SiteSettings {
-  socialLinks: SocialLinks;
-  seo: {
-    title: string;
-    description: string;
-    ogImageUrl?: string;
-  };
-}
-
-export interface MediaAsset {
-  id: string;
-  publicId: string;
-  url: string;
-  filename: string;
-  type: "image" | "raw" | "video";
-  usage?: string; // e.g. "project:bloodbridge", "profile-avatar"
-  uploadedAt: string;
-}
-
-export interface AdminUser {
-  uid: string;
-  email: string;
-}
+export interface ContactMessage { id: string; name: string; email: string; subject: string; message: string; status: MessageStatus; createdAt: string; }
+export interface GithubSettings { username: string; profileUrl: string; showContributions: boolean; showRepoStats: boolean; cachedContributionCount?: number; cachedAt?: string; }
+export interface SocialLinks { github?: string; linkedin?: string; facebook?: string; email?: string; other?: { label: string; url: string }[]; }
+export interface SiteSettings { socialLinks: SocialLinks; contact?: { phone?: string; whatsapp?: string; location?: string; intro?: string; }; seo: { title: string; description: string; ogImageUrl?: string; }; }
+export interface MediaAsset { id: string; publicId: string; url: string; filename: string; type: "image" | "raw" | "video"; usage?: string; uploadedAt: string; }
+export interface AdminUser { uid: string; email: string; }

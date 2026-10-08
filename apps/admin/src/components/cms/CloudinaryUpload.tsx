@@ -28,7 +28,7 @@ export function CloudinaryUpload({
     const cloud = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string | undefined;
     const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET as string | undefined;
     if (!cloud || !preset) {
-      setError("Cloudinary is not configured. Add VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET to apps/admin/.env.");
+      setError("Cloudinary is not configured. Add VITE_CLOUDINARY_CLOUD_NAME and an UNSIGNED VITE_CLOUDINARY_UPLOAD_PRESET to apps/admin/.env.");
       return;
     }
 
@@ -40,7 +40,7 @@ export function CloudinaryUpload({
       body.append("folder", folder);
       const response = await fetch(`https://api.cloudinary.com/v1_1/${cloud}/image/upload`, { method: "POST", body });
       const data = await response.json() as { secure_url?: string; public_id?: string; error?: { message?: string } };
-      if (!response.ok || !data.secure_url || !data.public_id) throw new Error(data.error?.message ?? "Cloudinary upload failed.");
+      if (!response.ok || !data.secure_url || !data.public_id) throw new Error(data.error?.message ?? "Cloudinary upload failed. Make sure the upload preset is UNSIGNED and enabled for client-side uploads.");
       onChange({ url: data.secure_url, publicId: data.public_id });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload failed.");
@@ -64,7 +64,7 @@ export function CloudinaryUpload({
       </div>
       {value && <img src={value} alt="Uploaded preview" className="mt-3 max-h-48 w-full rounded-lg border border-base-border object-cover" />}
       {!value && <div className="flex items-center gap-2 text-xs text-foreground-faint"><ImagePlus size={14} /> No image selected</div>}
-      {error && <p className="text-xs text-red-400">{error}</p>}
+      {error && <div className="space-y-1"><p className="text-xs text-red-400">{error}</p><p className="text-[11px] leading-5 text-foreground-faint">Cloudinary Dashboard → Settings → Upload → Upload presets → create/edit the preset → Signing Mode: Unsigned.</p></div>}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { useEffect, useState } from "react";
@@ -23,7 +23,8 @@ export function Layout() {
       <div aria-hidden="true" className="site-background" />
       <Navbar />
       <main className="pt-20">
-        <AnimatePresence mode="wait">
+        <LayoutGroup id="portfolio-route">
+          <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
             initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
@@ -33,7 +34,8 @@ export function Layout() {
           >
             <Outlet />
           </motion.div>
-        </AnimatePresence>
+          </AnimatePresence>
+        </LayoutGroup>
       </main>
       <Footer />
       <button

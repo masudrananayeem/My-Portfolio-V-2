@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../components/auth/AuthProvider";
 import { Button } from "@nayeem/ui";
 
 export function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const accessError = new URLSearchParams(location.search).get("error") === "not-admin";
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +56,7 @@ export function Login() {
           </div>
         </div>
 
-        {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
+        {(error || accessError) && <p className="mt-4 text-sm text-red-400">{error ?? "This Firebase account is not allow-listed as an admin."}</p>}
 
         <Button type="submit" disabled={submitting} className="mt-6 w-full justify-center">
           {submitting ? "SIGNING IN..." : "SIGN IN"}

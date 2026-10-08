@@ -8,7 +8,6 @@ import { ThemeToggle } from "../common/ThemeToggle";
 const NAV_ITEMS = [
   { to: "/", label: "HOME" },
   { to: "/about", label: "ABOUT" },
-  { to: "/experience", label: "EXPERIENCE" },
   { to: "/projects", label: "PROJECTS" },
   { to: "/research", label: "RESEARCH" },
   { to: "/github", label: "GITHUB" },

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { gsap } from "../../lib/gsap";
 import { LinkButton, StatusPill, Container } from "@nayeem/ui";
 import { useProfile } from "../../hooks/useFirestoreData";
@@ -60,7 +61,7 @@ export function Hero() {
           </div>
 
           <div className="order-1 min-w-0 lg:order-2">
-            <div ref={frameRef} className="group relative mx-auto w-full max-w-[17.5rem] sm:max-w-sm">
+            <motion.div layoutId="profile-hero-image" ref={frameRef} className="group relative mx-auto w-full max-w-[17.5rem] sm:max-w-sm">
               <div className="absolute -inset-4 rounded-2xl bg-gradient-to-br from-accent-cyan/12 via-accent-purple/8 to-transparent opacity-70 blur-2xl transition-opacity duration-700 group-hover:opacity-100 dark:opacity-70" />
               <div className="relative overflow-hidden rounded-2xl border border-base-border bg-base-panel/40 shadow-[0_18px_42px_-24px_rgb(15_23_42/0.28)] dark:shadow-[0_20px_52px_-28px_rgb(0_229_255/0.22)]">
                 <img src={avatarUrl} alt="Masud Rana Nayeem — Full Stack Developer" className="aspect-[4/5] w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.035]" />
@@ -76,7 +77,7 @@ export function Hero() {
                 <p className="font-display text-sm font-semibold tracking-[0.12em] text-foreground">MASUD RANA NAYEEM</p>
                 <p className="mt-1 font-mono text-[9px] tracking-[0.16em] text-foreground-muted">FULL STACK DEVELOPER · AI / ML · RESEARCH</p>
               </div>
-            </div>
+            </motion.div>
             <div className="mt-16 hidden lg:block"><CapabilitiesList /></div>
           </div>
         </div>

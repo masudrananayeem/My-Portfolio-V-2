@@ -15,7 +15,9 @@ service cloud.firestore {
     match /techStack/{docId}    { allow read: if true; allow write: if isAdmin(); }
     match /experience/{docId}   { allow read: if true; allow write: if isAdmin(); }
     match /research/{docId}     { allow read: if true; allow write: if isAdmin(); }
+    match /articles/{docId}     { allow read: if resource.data.status == 'published' || isAdmin(); allow write: if isAdmin(); }
     match /services/{docId}     { allow read: if true; allow write: if isAdmin(); }
+    match /certificates/{docId} { allow read: if true; allow write: if isAdmin(); }
     match /github/{docId}       { allow read: if true; allow write: if isAdmin(); }
     match /socialLinks/{docId}  { allow read: if true; allow write: if isAdmin(); }
     match /settings/{docId}     { allow read: if true; allow write: if isAdmin(); }

@@ -16,18 +16,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
-    });
+    }, () => setLoading(false));
     return unsub;
   }, []);
 
   const login = async (email: string, password: string) => {
+    if (!auth) throw new Error("Firebase Auth is not configured. Check the admin .env file.");
     await signInWithEmailAndPassword(auth, email, password);
   };
   const logout = async () => {
-    await signOut(auth);
+    if (auth) await signOut(auth);
   };
 
   return (

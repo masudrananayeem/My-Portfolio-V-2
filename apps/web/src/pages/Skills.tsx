@@ -11,6 +11,10 @@ const CATEGORY_LABELS: Record<SkillCategory, string> = {
   "ai-ml": "AI / ML",
   tools: "Tools",
   architecture: "Architecture",
+  data: "DATA",
+  languages: "LANGUAGES",
+  testing: "TESTING",
+  security: "SECURITY",
 };
 
 export function Skills() {

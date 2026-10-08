@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Github, Save, RefreshCw } from "lucide-react";
+import { Save, RefreshCw } from "lucide-react";
 import { GlowCard, Button } from "@nayeem/ui";
 import { COLLECTIONS, getDocument, setDocument } from "@nayeem/firebase";
 import type { GithubSettings } from "@nayeem/types";

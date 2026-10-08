@@ -18,7 +18,7 @@ export function ExperienceAdmin() {
   const [editingCert, setEditingCert] = useState<CertDoc | Omit<Certificate, "id"> | null>(null);
 
   const [error, setError] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [, setSaving] = useState(false);
   const load = async () => { setError(""); try { const [exp, cert] = await Promise.all([getCollection<ExperienceItem>(COLLECTIONS.experience), getCollection<Certificate>(COLLECTIONS.certificates)]); setExperiences(exp.sort((a,b)=>Number(a.order??0)-Number(b.order??0))); setCertificates(cert.sort((a,b)=>Number(a.order??0)-Number(b.order??0))); } catch(e) { setExperiences([]); setCertificates([]); setError(e instanceof Error ? e.message : "Unable to load career data."); } };
   useEffect(() => { void load(); }, []);
 

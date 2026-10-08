@@ -1,78 +1,736 @@
 import { useEffect, useState } from "react";
-import { getCollection, createDocument, updateDocument, deleteDocument, COLLECTIONS } from "@nayeem/firebase";
+import {
+  getCollection,
+  createDocument,
+  updateDocument,
+  deleteDocument,
+  COLLECTIONS,
+} from "@nayeem/firebase";
+
 import type { Project, ProjectImage } from "@nayeem/types";
+
 import { slugify } from "@nayeem/utils";
-import { Button, GlowCard, Loader, EmptyState } from "@nayeem/ui";
-import { Plus, Pencil, Trash2, Star, X, ExternalLink, Github } from "lucide-react";
+
+import {
+  Button,
+  GlowCard,
+  Loader,
+  EmptyState,
+} from "@nayeem/ui";
+
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Star,
+  X,
+  ExternalLink,
+  Github,
+} from "lucide-react";
+
 import { CloudinaryUpload } from "../components/cms/CloudinaryUpload";
 
 type ProjectDoc = Project & { id: string };
-const emptyForm: Omit<Project, "id"> = { slug: "", title: "", description: "", longDescription: "", category: "Full Stack", year: new Date().getFullYear(), technologies: [], images: [], githubUrl: "", liveUrl: "", featured: false, order: 0, status: "published", problem: "", solutionText: "", features: [], architecture: "", challenges: "", results: "" };
+
+const emptyForm: Omit<Project, "id"> = {
+  slug: "",
+  title: "",
+  description: "",
+  longDescription: "",
+  category: "Full Stack",
+  year: new Date().getFullYear(),
+  technologies: [],
+  images: [],
+  githubUrl: "",
+  liveUrl: "",
+  featured: false,
+  order: 0,
+  status: "published",
+  problem: "",
+  solutionText: "",
+  features: [],
+  architecture: "",
+  challenges: "",
+  results: "",
+};
 
 export function ProjectsAdmin() {
   const [projects, setProjects] = useState<ProjectDoc[] | null>(null);
-  const [editing, setEditing] = useState<ProjectDoc | Omit<Project, "id"> | null>(null);
+  const [editing, setEditing] = useState<
+    ProjectDoc | Omit<Project, "id"> | null
+  >(null);
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   const load = async () => {
     setError("");
+
     try {
       const data = await getCollection<Project>(COLLECTIONS.projects);
-      setProjects([...data].sort((a, b) => Number(a.order ?? 0) - Number(b.order ?? 0)));
+
+      setProjects(
+        [...data].sort(
+          (a, b) => Number(a.order ?? 0) - Number(b.order ?? 0)
+        )
+      );
     } catch (e) {
       setProjects([]);
-      setError(e instanceof Error ? e.message : "Unable to load projects.");
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Unable to load projects."
+      );
     }
   };
 
-  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    void load();
+  }, []);
 
   const save = async () => {
     if (!editing) return;
-    setSaving(true); setError("");
-    const payload = { ...editing, slug: editing.slug || slugify(editing.title) };
+
+    setSaving(true);
+    setError("");
+
+    const payload = {
+      ...editing,
+      slug: editing.slug || slugify(editing.title),
+    };
+
     try {
       if ("id" in payload && payload.id) {
         const { id, ...rest } = payload;
-        await updateDocument(COLLECTIONS.projects, id, rest);
+
+        await updateDocument(
+          COLLECTIONS.projects,
+          id,
+          rest
+        );
       } else {
-        const { id: _id, ...rest } = payload;
-        await createDocument(COLLECTIONS.projects, rest);
+        await createDocument(
+          COLLECTIONS.projects,
+          payload
+        );
       }
+
       setEditing(null);
       await load();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to save project.");
-    } finally { setSaving(false); }
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Unable to save project."
+      );
+    } finally {
+      setSaving(false);
+    }
   };
 
   const remove = async (id: string) => {
     if (!window.confirm("Delete this project?")) return;
+
     setError("");
-    try { await deleteDocument(COLLECTIONS.projects, id); await load(); }
-    catch (e) { setError(e instanceof Error ? e.message : "Unable to delete project."); }
+
+    try {
+      await deleteDocument(
+        COLLECTIONS.projects,
+        id
+      );
+
+      await load();
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Unable to delete project."
+      );
+    }
   };
 
   const toggleFeatured = async (project: ProjectDoc) => {
     setError("");
-    try { await updateDocument(COLLECTIONS.projects, project.id, { featured: !project.featured }); await load(); }
-    catch (e) { setError(e instanceof Error ? e.message : "Unable to update project."); }
+
+    try {
+      await updateDocument(
+        COLLECTIONS.projects,
+        project.id,
+        {
+          featured: !project.featured,
+        }
+      );
+
+      await load();
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message
+          : "Unable to update project."
+      );
+    }
   };
 
-  return <div>
-    <div className="flex flex-wrap items-center justify-between gap-4"><div><p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">CMS / WORK</p><h1 className="mt-2 font-display text-3xl font-bold">Projects</h1><p className="mt-1 text-sm text-foreground-muted">Manage project cards, images, links and full detail pages.</p></div><Button type="button" onClick={() => setEditing({ ...emptyForm, technologies: [], images: [], features: [] })}><Plus size={14}/> NEW PROJECT</Button></div>
-    {error && <GlowCard className="mt-5 border-red-400/30"><p className="text-sm leading-6 text-red-300">{error}</p></GlowCard>}
-    {!projects && <Loader label="LOADING PROJECTS…" />}
-    {projects?.length === 0 && <div className="mt-8"><EmptyState title="NO PROJECTS YET" hint="Click New Project to create the first one." /></div>}
-    <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{(projects ?? []).map((p) => <GlowCard key={p.id}>{p.images?.[0]?.url && <img src={p.images[0].url} alt={p.images[0].alt ?? p.title} className="mb-4 aspect-video w-full rounded-lg object-cover" />}<div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="font-semibold">{p.title}</p><p className="mt-1 text-xs text-foreground-muted">{p.category} · {p.year}</p></div><div className="flex gap-3"><button type="button" onClick={() => void toggleFeatured(p)} className={p.featured ? "text-accent-cyan" : "text-foreground-faint"}><Star size={15} fill={p.featured ? "currentColor" : "none"}/></button><button type="button" onClick={() => setEditing({ ...p })}><Pencil size={15}/></button><button type="button" onClick={() => void remove(p.id)} className="text-red-400"><Trash2 size={15}/></button></div></div><div className="mt-4 flex gap-3">{p.githubUrl && <a href={p.githubUrl} target="_blank" rel="noreferrer" className="text-xs text-foreground-muted hover:text-accent-cyan"><Github size={14}/></a>}{p.liveUrl && <a href={p.liveUrl} target="_blank" rel="noreferrer" className="text-xs text-foreground-muted hover:text-accent-cyan"><ExternalLink size={14}/></a>}</div></GlowCard>)}</div>
-    {editing && <ProjectModal value={editing} setValue={setEditing} onClose={() => !saving && setEditing(null)} onSave={() => void save()} saving={saving}/>}
-  </div>;
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">
+            CMS / WORK
+          </p>
+
+          <h1 className="mt-2 font-display text-3xl font-bold">
+            Projects
+          </h1>
+
+          <p className="mt-1 text-sm text-foreground-muted">
+            Manage project cards, images, links and full detail pages.
+          </p>
+        </div>
+
+        <Button
+          type="button"
+          onClick={() =>
+            setEditing({
+              ...emptyForm,
+              technologies: [],
+              images: [],
+              features: [],
+            })
+          }
+        >
+          <Plus size={14} />
+          NEW PROJECT
+        </Button>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <GlowCard className="mt-5 border-red-400/30">
+          <p className="text-sm leading-6 text-red-300">
+            {error}
+          </p>
+        </GlowCard>
+      )}
+
+      {/* Loading */}
+      {!projects && (
+        <Loader label="LOADING PROJECTS…" />
+      )}
+
+      {/* Empty */}
+      {projects?.length === 0 && (
+        <div className="mt-8">
+          <EmptyState
+            title="NO PROJECTS YET"
+            hint="Click New Project to create the first one."
+          />
+        </div>
+      )}
+
+      {/* Project Cards */}
+      <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {(projects ?? []).map((p) => (
+          <GlowCard key={p.id}>
+            {p.images?.[0]?.url && (
+              <img
+                src={p.images[0].url}
+                alt={p.images[0].alt ?? p.title}
+                className="mb-4 aspect-video w-full rounded-lg object-cover"
+              />
+            )}
+
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-semibold">
+                  {p.title}
+                </p>
+
+                <p className="mt-1 text-xs text-foreground-muted">
+                  {p.category} · {p.year}
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                {/* Featured */}
+                <button
+                  type="button"
+                  onClick={() => void toggleFeatured(p)}
+                  className={
+                    p.featured
+                      ? "text-accent-cyan"
+                      : "text-foreground-faint"
+                  }
+                  aria-label={
+                    p.featured
+                      ? "Remove featured status"
+                      : "Mark as featured"
+                  }
+                >
+                  <Star
+                    size={15}
+                    fill={
+                      p.featured
+                        ? "currentColor"
+                        : "none"
+                    }
+                  />
+                </button>
+
+                {/* Edit */}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setEditing({ ...p })
+                  }
+                  aria-label="Edit project"
+                >
+                  <Pencil size={15} />
+                </button>
+
+                {/* Delete */}
+                <button
+                  type="button"
+                  onClick={() => void remove(p.id)}
+                  className="text-red-400"
+                  aria-label="Delete project"
+                >
+                  <Trash2 size={15} />
+                </button>
+              </div>
+            </div>
+
+            {/* Links */}
+            <div className="mt-4 flex gap-3">
+              {p.githubUrl && (
+                <a
+                  href={p.githubUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-foreground-muted hover:text-accent-cyan"
+                  aria-label="GitHub repository"
+                >
+                  <Github size={14} />
+                </a>
+              )}
+
+              {p.liveUrl && (
+                <a
+                  href={p.liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-foreground-muted hover:text-accent-cyan"
+                  aria-label="Live project"
+                >
+                  <ExternalLink size={14} />
+                </a>
+              )}
+            </div>
+          </GlowCard>
+        ))}
+      </div>
+
+      {/* Project Modal */}
+      {editing && (
+        <ProjectModal
+          value={editing}
+          setValue={setEditing}
+          onClose={() =>
+            !saving && setEditing(null)
+          }
+          onSave={() => void save()}
+          saving={saving}
+        />
+      )}
+    </div>
+  );
 }
 
-function ProjectModal({ value, setValue, onClose, onSave, saving }: { value: any; setValue: (v: any) => void; onClose: () => void; onSave: () => void; saving: boolean }) {
+function ProjectModal({
+  value,
+  setValue,
+  onClose,
+  onSave,
+  saving,
+}: {
+  value: any;
+  setValue: (v: any) => void;
+  onClose: () => void;
+  onSave: () => void;
+  saving: boolean;
+}) {
   const images: ProjectImage[] = value.images ?? [];
-  const setImage = (result: { url: string; publicId: string }) => setValue({ ...value, images: [{ ...result, alt: value.title || "Project image" }] });
-  return <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"><div className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-base-border bg-base-near p-6 shadow-2xl"><div className="flex items-center justify-between"><h2 className="font-display text-lg font-semibold">{"id" in value ? "Edit Project" : "New Project"}</h2><button type="button" onClick={onClose}><X size={18}/></button></div><div className="mt-5 grid gap-4 sm:grid-cols-2"><Input label="Title" value={value.title} onChange={(v)=>setValue({...value,title:v})}/><Input label="Slug" value={value.slug} onChange={(v)=>setValue({...value,slug:v})}/><Input label="Category" value={value.category} onChange={(v)=>setValue({...value,category:v})}/><Input label="Year" value={String(value.year)} onChange={(v)=>setValue({...value,year:Number(v)||new Date().getFullYear()})}/><Input label="GitHub URL" value={value.githubUrl??""} onChange={(v)=>setValue({...value,githubUrl:v})}/><Input label="Live URL" value={value.liveUrl??""} onChange={(v)=>setValue({...value,liveUrl:v})}/><div className="sm:col-span-2"><Input label="Short Description" value={value.description} onChange={(v)=>setValue({...value,description:v})} textarea/></div><div className="sm:col-span-2"><Input label="Full Project Details" value={value.longDescription??""} onChange={(v)=>setValue({...value,longDescription:v})} textarea/></div><div className="sm:col-span-2"><CloudinaryUpload value={images[0]?.url} label="Project picture" folder="portfolio/projects" onChange={setImage}/></div><div className="sm:col-span-2"><Input label="Technologies (one per line)" value={(value.technologies??[]).join("\n")} onChange={(v)=>setValue({...value,technologies:v.split("\n").map((x:string)=>x.trim()).filter(Boolean)})} textarea/></div><div className="sm:col-span-2"><Input label="Features (one per line)" value={(value.features??[]).join("\n")} onChange={(v)=>setValue({...value,features:v.split("\n").map((x:string)=>x.trim()).filter(Boolean)})} textarea/></div><Input label="Problem" value={value.problem??""} onChange={(v)=>setValue({...value,problem:v})} textarea/><Input label="Solution" value={value.solutionText??""} onChange={(v)=>setValue({...value,solutionText:v})} textarea/><Input label="Architecture" value={value.architecture??""} onChange={(v)=>setValue({...value,architecture:v})} textarea/><Input label="Challenges" value={value.challenges??""} onChange={(v)=>setValue({...value,challenges:v})} textarea/><Input label="Results" value={value.results??""} onChange={(v)=>setValue({...value,results:v})} textarea/><Input label="Order" value={String(value.order)} onChange={(v)=>setValue({...value,order:Number(v)||0})}/><label className="flex items-center gap-2"><input type="checkbox" checked={Boolean(value.featured)} onChange={(e)=>setValue({...value,featured:e.target.checked})}/> Featured project</label><label className="block"><span className="font-mono text-[10px] text-foreground-muted">STATUS</span><select value={value.status} onChange={(e)=>setValue({...value,status:e.target.value})} className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm"><option value="published">published</option><option value="draft">draft</option></select></label></div><div className="mt-6 flex justify-end gap-3"><Button type="button" variant="ghost" onClick={onClose}>CANCEL</Button><Button type="button" onClick={onSave} disabled={saving}>{saving?"SAVING…":"SAVE PROJECT"}</Button></div></div></div>;
+
+  const setImage = (result: {
+    url: string;
+    publicId: string;
+  }) => {
+    setValue({
+      ...value,
+      images: [
+        {
+          ...result,
+          alt: value.title || "Project image",
+        },
+      ],
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
+      <div className="max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-2xl border border-base-border bg-base-near p-6 shadow-2xl">
+        {/* Modal Header */}
+        <div className="flex items-center justify-between">
+          <h2 className="font-display text-lg font-semibold">
+            {"id" in value
+              ? "Edit Project"
+              : "New Project"}
+          </h2>
+
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+            aria-label="Close modal"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Form */}
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          <Input
+            label="Title"
+            value={value.title}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                title: v,
+              })
+            }
+          />
+
+          <Input
+            label="Slug"
+            value={value.slug}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                slug: v,
+              })
+            }
+          />
+
+          <Input
+            label="Category"
+            value={value.category}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                category: v,
+              })
+            }
+          />
+
+          <Input
+            label="Year"
+            value={String(value.year)}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                year:
+                  Number(v) ||
+                  new Date().getFullYear(),
+              })
+            }
+          />
+
+          <Input
+            label="GitHub URL"
+            value={value.githubUrl ?? ""}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                githubUrl: v,
+              })
+            }
+          />
+
+          <Input
+            label="Live URL"
+            value={value.liveUrl ?? ""}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                liveUrl: v,
+              })
+            }
+          />
+
+          <div className="sm:col-span-2">
+            <Input
+              label="Short Description"
+              value={value.description}
+              onChange={(v) =>
+                setValue({
+                  ...value,
+                  description: v,
+                })
+              }
+              textarea
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <Input
+              label="Full Project Details"
+              value={value.longDescription ?? ""}
+              onChange={(v) =>
+                setValue({
+                  ...value,
+                  longDescription: v,
+                })
+              }
+              textarea
+            />
+          </div>
+
+          {/* Cloudinary */}
+          <div className="sm:col-span-2">
+            <CloudinaryUpload
+              value={images[0]?.url}
+              label="Project picture"
+              folder="portfolio/projects"
+              onChange={setImage}
+            />
+          </div>
+
+          {/* Technologies */}
+          <div className="sm:col-span-2">
+            <Input
+              label="Technologies (one per line)"
+              value={(value.technologies ?? []).join(
+                "\n"
+              )}
+              onChange={(v) =>
+                setValue({
+                  ...value,
+                  technologies: v
+                    .split("\n")
+                    .map((x: string) =>
+                      x.trim()
+                    )
+                    .filter(Boolean),
+                })
+              }
+              textarea
+            />
+          </div>
+
+          {/* Features */}
+          <div className="sm:col-span-2">
+            <Input
+              label="Features (one per line)"
+              value={(value.features ?? []).join(
+                "\n"
+              )}
+              onChange={(v) =>
+                setValue({
+                  ...value,
+                  features: v
+                    .split("\n")
+                    .map((x: string) =>
+                      x.trim()
+                    )
+                    .filter(Boolean),
+                })
+              }
+              textarea
+            />
+          </div>
+
+          {/* Problem */}
+          <Input
+            label="Problem"
+            value={value.problem ?? ""}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                problem: v,
+              })
+            }
+            textarea
+          />
+
+          {/* Solution */}
+          <Input
+            label="Solution"
+            value={value.solutionText ?? ""}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                solutionText: v,
+              })
+            }
+            textarea
+          />
+
+          {/* Architecture */}
+          <Input
+            label="Architecture"
+            value={value.architecture ?? ""}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                architecture: v,
+              })
+            }
+            textarea
+          />
+
+          {/* Challenges */}
+          <Input
+            label="Challenges"
+            value={value.challenges ?? ""}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                challenges: v,
+              })
+            }
+            textarea
+          />
+
+          {/* Results */}
+          <Input
+            label="Results"
+            value={value.results ?? ""}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                results: v,
+              })
+            }
+            textarea
+          />
+
+          {/* Order */}
+          <Input
+            label="Order"
+            value={String(value.order)}
+            onChange={(v) =>
+              setValue({
+                ...value,
+                order: Number(v) || 0,
+              })
+            }
+          />
+
+          {/* Featured */}
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={Boolean(value.featured)}
+              onChange={(e) =>
+                setValue({
+                  ...value,
+                  featured: e.target.checked,
+                })
+              }
+            />
+
+            Featured project
+          </label>
+
+          {/* Status */}
+          <label className="block">
+            <span className="font-mono text-[10px] text-foreground-muted">
+              STATUS
+            </span>
+
+            <select
+              value={value.status}
+              onChange={(e) =>
+                setValue({
+                  ...value,
+                  status: e.target.value,
+                })
+              }
+              className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm"
+            >
+              <option value="published">
+                published
+              </option>
+
+              <option value="draft">
+                draft
+              </option>
+            </select>
+          </label>
+        </div>
+
+        {/* Actions */}
+        <div className="mt-6 flex justify-end gap-3">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={onClose}
+            disabled={saving}
+          >
+            CANCEL
+          </Button>
+
+          <Button
+            type="button"
+            onClick={onSave}
+            disabled={saving}
+          >
+            {saving
+              ? "SAVING…"
+              : "SAVE PROJECT"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
-function Input({label,value,onChange,textarea=false}:{label:string;value:string;onChange:(v:string)=>void;textarea?:boolean}){return <label className="block"><span className="font-mono text-[10px] tracking-widest text-foreground-muted">{label.toUpperCase()}</span>{textarea?<textarea rows={4} value={value} onChange={e=>onChange(e.target.value)} className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm"/>:<input value={value} onChange={e=>onChange(e.target.value)} className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm"/>}</label>}
+
+function Input({
+  label,
+  value,
+  onChange,
+  textarea = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  textarea?: boolean;
+}) {
+  return (
+    <label className="block">
+      <span className="font-mono text-[10px] tracking-widest text-foreground-muted">
+        {label.toUpperCase()}
+      </span>
+
+      {textarea ? (
+        <textarea
+          rows={4}
+          value={value}
+          onChange={(e) =>
+            onChange(e.target.value)
+          }
+          className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm"
+        />
+      ) : (
+        <input
+          value={value}
+          onChange={(e) =>
+            onChange(e.target.value)
+          }
+          className="mt-1 w-full rounded-lg border border-base-border bg-base-black px-3 py-2 text-sm"
+        />
+      )}
+    </label>
+  );
+}

@@ -1,5 +1,6 @@
 import { cn } from "@nayeem/utils";
 import type { ButtonHTMLAttributes, AnchorHTMLAttributes } from "react";
+import { Link } from "react-router-dom";
 
 const base =
   "inline-flex items-center justify-center gap-2 font-mono text-xs tracking-[0.2em] uppercase px-6 py-3 transition-all duration-300 relative overflow-hidden group";
@@ -26,9 +27,18 @@ interface LinkButtonProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   variant?: keyof typeof variants;
 }
 
-export function LinkButton({ variant = "primary", className, children, ...props }: LinkButtonProps) {
+export function LinkButton({ variant = "primary", className, children, href, target, download, ...props }: LinkButtonProps) {
+  const internal = Boolean(href?.startsWith("/")) && !target && !download;
+  if (internal && href) {
+    return (
+      <Link to={href} className={cn(base, variants[variant], className)}>
+        {children}
+      </Link>
+    );
+  }
+
   return (
-    <a className={cn(base, variants[variant], className)} {...props}>
+    <a href={href} target={target} download={download} className={cn(base, variants[variant], className)} {...props}>
       {children}
     </a>
   );

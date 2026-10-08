@@ -17,15 +17,12 @@ export function GithubSettingsAdmin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
 
   const load = async () => {
-    setLoading(true); setError("");
+    setLoading(true);
     try {
       const data = await getDocument<GithubSettings>(COLLECTIONS.github, "settings");
       if (data) setForm({ ...defaults, ...data });
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "Unable to load GitHub settings.");
     } finally {
       setLoading(false);
     }
@@ -83,7 +80,6 @@ export function GithubSettingsAdmin() {
               <span><b>Show repository statistics</b></span>
             </label>
             {message && <p className="text-sm text-accent-green">{message}</p>}
-            {error && <p className="text-sm text-red-400">{error}</p>}
             <Button onClick={() => void save()} disabled={saving}>
               <Save size={16} /> {saving ? "SAVING…" : "SAVE SETTINGS"}
             </Button>

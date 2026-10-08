@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom";
-import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { useEffect, useState } from "react";
@@ -11,6 +11,8 @@ export function Layout() {
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
+    // Always reset immediately when the route changes. The old implementation
+    // waited for an exit animation, which could leave an empty viewport.
     scrollToTop(true);
     const handleScroll = () => setShowTop(window.scrollY > 480);
     handleScroll();
@@ -22,20 +24,16 @@ export function Layout() {
     <div className="relative min-h-screen overflow-x-clip bg-base-black">
       <div aria-hidden="true" className="site-background" />
       <Navbar />
-      <main className="pt-20">
-        <LayoutGroup id="portfolio-route">
-          <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -12, filter: "blur(5px)" }}
-            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <Outlet />
-          </motion.div>
-          </AnimatePresence>
-        </LayoutGroup>
+      <main className="relative z-10 pt-20">
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          className="min-h-[calc(100vh-5rem)]"
+        >
+          <Outlet />
+        </motion.div>
       </main>
       <Footer />
       <button

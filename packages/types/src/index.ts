@@ -22,26 +22,12 @@ export interface CodingProfile {
   accent?: string;
 }
 
-export interface EducationItem {
-  degree: string;
-  institution: string;
-  period: string;
-  result?: string;
-}
-
 export interface AboutContent {
   eyebrow: string;
   title: string;
   intro: string;
   body: string;
   highlights: string[];
-  education?: EducationItem[];
-  bioDetails?: {
-    shortDegree?: string;
-    availability?: string;
-    email?: string;
-    phone?: string;
-  };
   codingProfiles?: {
     beecrowd?: CodingProfile;
     codeforces?: CodingProfile;
@@ -50,7 +36,7 @@ export interface AboutContent {
   order?: number;
 }
 
-export type SkillCategory = "languages" | "frontend" | "backend" | "database" | "cloud" | "devops" | "ai-ml" | "data" | "testing" | "security" | "tools" | "architecture" | "mobile";
+export type SkillCategory = "languages" | "frontend" | "backend" | "database" | "cloud" | "devops" | "ai-ml" | "data" | "testing" | "security" | "tools" | "architecture";
 export interface Skill { id: string; name: string; category: SkillCategory; icon?: string; order: number; }
 export interface TechStackItem { id: string; name: string; icon?: string; row: 1 | 2; order: number; enabled: boolean; }
 

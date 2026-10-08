@@ -104,3 +104,21 @@ Two separate Cloudflare Pages projects (or one with two build configs):
    server-side email notifications too) and point `VITE_WORKER_API_URL` at it.
 4. Add the Hero 3D scene and the real GitHub contribution heatmap.
 5. Deploy.
+
+## Admin management
+
+All admin-only tooling is inside `apps/admin`.
+
+```bash
+cd apps/admin
+npm run admin:create
+```
+
+Place the Firebase Admin SDK service-account JSON at `apps/admin/serviceAccountKey.json` and keep it private. Copy `apps/admin/.env.admin.example` to `apps/admin/.env.admin` if you want to configure the service-account path or credentials.
+
+Run the admin app with:
+
+```bash
+cd apps/admin
+npm run dev
+```

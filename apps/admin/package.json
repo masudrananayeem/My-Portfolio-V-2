@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint . --ext ts,tsx",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "admin:create": "node scripts/create-admin.mjs"
   },
   "dependencies": {
     "@nayeem/ui": "*",
@@ -23,7 +24,8 @@
     "react-hook-form": "^7.53.1",
     "@hookform/resolvers": "^3.9.0",
     "zod": "^3.23.8",
-    "recharts": "^2.13.0"
+    "recharts": "^2.13.0",
+    "firebase-admin": "^13.5.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.11",

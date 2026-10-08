@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../components/auth/AuthProvider";
 import { Button } from "@nayeem/ui";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "../components/theme/ThemeProvider";
 
 export function Login() {
   const { login } = useAuth();
@@ -10,6 +12,7 @@ export function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +29,16 @@ export function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-grid px-6">
+    <div className="relative flex min-h-screen items-center justify-center bg-grid px-6">
+      <button
+        type="button"
+        onClick={toggleTheme}
+        title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+        aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+        className="absolute right-6 top-6 flex h-10 w-10 items-center justify-center rounded-lg border border-base-border bg-base-panel text-foreground-muted transition hover:border-accent-cyan/50 hover:text-accent-cyan"
+      >
+        {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
+      </button>
       <form onSubmit={onSubmit} className="w-full max-w-sm rounded-xl border border-base-border bg-base-panel/60 p-8 backdrop-blur-sm">
         <p className="font-mono text-xs tracking-[0.3em] text-accent-cyan">ADMIN ACCESS</p>
         <h1 className="mt-2 font-display text-2xl font-bold">Sign In</h1>
@@ -36,6 +48,7 @@ export function Login() {
             <label className="font-mono text-xs tracking-widest text-foreground-muted">EMAIL</label>
             <input
               type="email"
+              autoComplete="username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -46,6 +59,7 @@ export function Login() {
             <label className="font-mono text-xs tracking-widest text-foreground-muted">PASSWORD</label>
             <input
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

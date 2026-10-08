@@ -2,7 +2,77 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --base-black: 5 7 10;
+  --base-near: 10 13 18;
+  --base-charcoal: 18 22 29;
+  --base-panel: 23 28 37;
+  --base-border: 43 50 62;
+  --foreground: 245 247 250;
+  --foreground-muted: 164 174 190;
+  --foreground-faint: 112 124 143;
+  --accent-primary: 45 212 191;
+  --accent-secondary: 129 140 248;
+  --accent-blue: 59 130 246;
+  --accent-success: 34 211 165;
+  --grid-line: 255 255 255;
+}
+
+html.light {
+  --base-black: 248 250 252;
+  --base-near: 255 255 255;
+  --base-charcoal: 241 245 249;
+  --base-panel: 255 255 255;
+  --base-border: 203 213 225;
+  --foreground: 15 23 42;
+  --foreground-muted: 55 65 81;
+  --foreground-faint: 100 116 139;
+  --accent-primary: 13 148 136;
+  --accent-secondary: 79 70 229;
+  --accent-blue: 37 99 235;
+  --accent-success: 5 150 105;
+  --grid-line: 15 23 42;
+}
+
 @layer base {
   * { @apply border-base-border; }
-  body { @apply bg-base-black text-foreground; }
+  html { min-width: 320px; color-scheme: dark; }
+  html.light { color-scheme: light; }
+  body {
+    @apply bg-base-black text-foreground font-body antialiased;
+    min-width: 320px;
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
+    transition: background-color .25s ease, color .25s ease;
+  }
+  button, a { -webkit-tap-highlight-color: transparent; }
+  input, textarea, select { color: rgb(var(--foreground)); }
+  ::selection { @apply bg-accent-cyan/25 text-foreground; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
+
+@layer utilities {
+  .bg-grid {
+    background-image:
+      linear-gradient(rgb(var(--grid-line) / .055) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--grid-line) / .055) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}
+
+.admin-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 0%, rgb(var(--accent-primary) / .06), transparent 30%),
+    radial-gradient(circle at 90% 25%, rgb(var(--accent-secondary) / .05), transparent 30%),
+    rgb(var(--base-black));
+}
+
+html.light .admin-shell { background: rgb(var(--base-black)); }

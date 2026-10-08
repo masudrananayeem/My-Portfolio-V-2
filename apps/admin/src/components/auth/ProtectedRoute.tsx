@@ -46,7 +46,7 @@ export function ProtectedRoute() {
         <div className="max-w-lg rounded-2xl border border-red-400/30 bg-base-panel p-6">
           <h1 className="font-display text-xl font-semibold text-red-300">Admin access check failed</h1>
           <p className="mt-2 text-sm leading-6 text-foreground-muted">{error}</p>
-          <p className="mt-4 text-xs leading-5 text-foreground-faint">Create a Firestore admins/{user.uid} document for this Firebase Auth user.</p>
+          <p className="mt-4 text-xs leading-5 text-foreground-faint">This account is not registered as an admin. From the project root, run <code className="font-mono text-accent-cyan">npm run admin:create</code> to create or repair the admin account from VS Code.</p>
         </div>
       </div>
     );

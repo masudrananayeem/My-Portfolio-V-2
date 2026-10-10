@@ -1,9 +1,13 @@
 {
-  "extends": "../config/tsconfig.base.json",
-  "compilerOptions": {
-    "composite": true,
-    "types": ["react", "react-dom"],
-    "ignoreDeprecations": "6.0"
-  },
-  "include": ["src"]
+    "extends":  "../config/tsconfig.base.json",
+    "compilerOptions":  {
+                            "composite":  true,
+                            "types":  [
+                                          "react",
+                                          "react-dom"
+                                      ]
+                        },
+    "include":  [
+                    "src"
+                ]
 }

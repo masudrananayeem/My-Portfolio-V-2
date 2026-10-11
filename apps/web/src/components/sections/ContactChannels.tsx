@@ -54,19 +54,19 @@ export function ContactChannels() {
   const socials = [
     {
       name: "Instagram",
-      url: socialLinks.instagram,
+      url: "https://www.instagram.com/mrn.nayeem",
       Icon: Instagram,
       iconClass: "text-pink-400",
     },
     {
       name: "Facebook",
-      url: socialLinks.facebook,
+      url: "https://www.facebook.com/mrn.nayeem.1",
       Icon: Facebook,
       iconClass: "text-blue-400",
     },
     {
       name: "LinkedIn",
-      url: socialLinks.linkedin,
+      url: "https://www.linkedin.com/in/masudrananayeem999",
       Icon: Linkedin,
       iconClass: "text-sky-400",
     },

@@ -157,7 +157,9 @@ export function ProjectDetail() {
                     alt={image.alt || `${project.title} screenshot ${index + 1}`}
                     loading={index === 0 ? "eager" : "lazy"}
                     decoding="async"
-                    className="block max-h-[620px] w-full bg-base-bg object-contain"
+                    className={`w-full object-cover transition-transform duration-700 group-hover:scale-[1.02] ${
+                      index === 0 && images.length > 2 ? "max-h-[620px] object-contain" : "max-h-[480px]"
+                    }`}
                   />
                   {image.alt && (
                     <figcaption className="border-t border-base-border px-4 py-3 text-xs text-foreground-muted">

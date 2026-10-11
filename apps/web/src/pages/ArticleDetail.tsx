@@ -205,7 +205,7 @@ export function ArticleDetail() {
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="Enter your name"
-                  className="w-full rounded-xl border border-[#263440] bg-[#0b1117] px-4 py-3 text-sm text-[#e6edf5] caret-[#2dd4bf] outline-none transition-colors placeholder:text-[#8391a2] focus:border-[#2dd4bf] focus:ring-2 focus:ring-[#2dd4bf]/15"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 caret-teal-600 outline-none transition-colors placeholder:text-slate-400 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/15 dark:border-[#263440] dark:bg-[#0b1117] dark:text-[#e6edf5] dark:caret-[#2dd4bf] dark:placeholder:text-[#8391a2] dark:focus:border-[#2dd4bf] dark:focus:ring-[#2dd4bf]/15"
                 />
               </div>
 
@@ -226,7 +226,7 @@ export function ArticleDetail() {
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="you@example.com"
-                  className="w-full rounded-xl border border-[#263440] bg-[#0b1117] px-4 py-3 text-sm text-[#e6edf5] caret-[#2dd4bf] outline-none transition-colors placeholder:text-[#8391a2] focus:border-[#2dd4bf] focus:ring-2 focus:ring-[#2dd4bf]/15"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 caret-teal-600 outline-none transition-colors placeholder:text-slate-400 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/15 dark:border-[#263440] dark:bg-[#0b1117] dark:text-[#e6edf5] dark:caret-[#2dd4bf] dark:placeholder:text-[#8391a2] dark:focus:border-[#2dd4bf] dark:focus:ring-[#2dd4bf]/15"
                 />
                 <p className="mt-2 text-xs text-foreground-muted">
                   Your email will only be included in the message sent to the
@@ -256,7 +256,7 @@ export function ArticleDetail() {
                 value={comment}
                 onChange={(event) => setComment(event.target.value)}
                 placeholder="Share your thoughts about this article..."
-                className="w-full resize-y rounded-xl border border-[#263440] bg-[#0b1117] px-4 py-3 text-sm leading-6 text-[#e6edf5] caret-[#2dd4bf] outline-none transition-colors placeholder:text-[#8391a2] focus:border-[#2dd4bf] focus:ring-2 focus:ring-[#2dd4bf]/15"
+                className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-900 caret-teal-600 outline-none transition-colors placeholder:text-slate-400 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/15 dark:border-[#263440] dark:bg-[#0b1117] dark:text-[#e6edf5] dark:caret-[#2dd4bf] dark:placeholder:text-[#8391a2] dark:focus:border-[#2dd4bf] dark:focus:ring-[#2dd4bf]/15"
               />
             </div>
 
@@ -266,8 +266,8 @@ export function ArticleDetail() {
                 aria-live="polite"
                 className={`mt-5 flex items-start gap-2 rounded-xl border p-3 text-sm ${
                   feedback.type === "success"
-                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                    : "border-red-500/30 bg-red-500/10 text-red-300"
+                    ? "border-emerald-600/30 bg-emerald-50 text-emerald-700 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300"
+                    : "border-red-600/30 bg-red-50 text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
                 }`}
               >
                 {feedback.type === "success" ? (

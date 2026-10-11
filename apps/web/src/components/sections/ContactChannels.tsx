@@ -17,8 +17,8 @@ function useLiveTime() {
   const [time, setTime] = useState(() => new Date());
 
   useEffect(() => {
-    const id = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(id);
+    const id = window.setInterval(() => setTime(new Date()), 1000);
+    return () => window.clearInterval(id);
   }, []);
 
   return time.toLocaleTimeString("en-US", {
@@ -27,6 +27,13 @@ function useLiveTime() {
     second: "2-digit",
   });
 }
+
+type SocialLinksWithProfiles = {
+  instagram?: string;
+  facebook?: string;
+  linkedin?: string;
+  [key: string]: unknown;
+};
 
 export function ContactChannels() {
   const { data: profile } = useProfile();
@@ -42,14 +49,7 @@ export function ContactChannels() {
   const location =
     settings?.contact?.location ?? profile?.location ?? "Bangladesh";
 
-  // Instagram may not yet be part of the shared settings type, so allow it
-  // as an optional social URL without changing the existing data model.
-  const socialLinks = (settings?.socialLinks ?? {}) as {
-    instagram?: string;
-    facebook?: string;
-    linkedin?: string;
-    [key: string]: unknown;
-  };
+  const socialLinks = (settings?.socialLinks ?? {}) as SocialLinksWithProfiles;
 
   const socials = [
     {
@@ -70,10 +70,7 @@ export function ContactChannels() {
       Icon: Linkedin,
       iconClass: "text-sky-400",
     },
-  ].filter(
-    (social): social is (typeof social) & { url: string } =>
-      typeof social.url === "string" && social.url.trim().length > 0,
-  );
+  ];
 
   const copyEmail = async () => {
     if (!email) return;
@@ -88,7 +85,7 @@ export function ContactChannels() {
   };
 
   return (
-    <div className="rounded-xl border border-base-border bg-base-panel/40 p-6">
+    <div className="h-full rounded-xl border border-base-border bg-base-panel/40 p-6">
       <p className="font-mono text-[11px] tracking-widest text-foreground-muted">
         DIRECT CHANNELS
       </p>
@@ -154,14 +151,34 @@ export function ContactChannels() {
           </span>
         </div>
 
-        {socials.length > 0 && (
-          <div className="border-t border-base-border pt-4">
-            <p className="mb-3 font-mono text-[10px] tracking-widest text-foreground-muted">
-              CONNECT WITH ME
-            </p>
+        <div className="border-t border-base-border pt-4">
+          <p className="mb-3 font-mono text-[10px] tracking-widest text-foreground-muted">
+            CONNECT WITH ME
+          </p>
 
-            <div className="space-y-3">
-              {socials.map(({ name, url, Icon, iconClass }) => (
+          <div className="space-y-3">
+            {socials.map(({ name, url, Icon, iconClass }) => {
+              const validUrl =
+                typeof url === "string" && /^https?:\/\//i.test(url.trim());
+
+              const content = (
+                <>
+                  <Icon size={17} className={`shrink-0 ${iconClass}`} />
+                  <span className="flex-1 text-sm text-foreground">{name}</span>
+                  {validUrl ? (
+                    <ExternalLink
+                      size={14}
+                      className="text-foreground-faint transition-colors group-hover:text-accent-cyan"
+                    />
+                  ) : (
+                    <span className="font-mono text-[9px] text-foreground-muted">
+                      ADD URL
+                    </span>
+                  )}
+                </>
+              );
+
+              return validUrl ? (
                 <a
                   key={name}
                   href={url}
@@ -170,19 +187,20 @@ export function ContactChannels() {
                   aria-label={`Visit my ${name} profile (opens in a new tab)`}
                   className="group flex items-center gap-3 rounded-lg border border-base-border px-4 py-3 transition-colors hover:border-accent-cyan/50 hover:bg-base-panel"
                 >
-                  <Icon size={17} className={`shrink-0 ${iconClass}`} />
-                  <span className="flex-1 text-sm text-foreground">
-                    {name}
-                  </span>
-                  <ExternalLink
-                    size={14}
-                    className="text-foreground-faint transition-colors group-hover:text-accent-cyan"
-                  />
+                  {content}
                 </a>
-              ))}
-            </div>
+              ) : (
+                <div
+                  key={name}
+                  className="flex items-center gap-3 rounded-lg border border-base-border px-4 py-3"
+                  title={`Add your ${name} profile URL in Admin Site Settings to enable this link.`}
+                >
+                  {content}
+                </div>
+              );
+            })}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

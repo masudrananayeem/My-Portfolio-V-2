@@ -205,7 +205,7 @@ export function ArticleDetail() {
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="Enter your name"
-                  className="w-full rounded-xl border border-base-border bg-base-bg px-4 py-3 text-sm outline-none transition-colors placeholder:text-foreground-muted/60 focus:border-accent-cyan"
+                  className="w-full rounded-xl border border-[#263440] bg-[#0b1117] px-4 py-3 text-sm text-[#e6edf5] caret-[#2dd4bf] outline-none transition-colors placeholder:text-[#8391a2] focus:border-[#2dd4bf] focus:ring-2 focus:ring-[#2dd4bf]/15"
                 />
               </div>
 
@@ -226,7 +226,7 @@ export function ArticleDetail() {
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="you@example.com"
-                  className="w-full rounded-xl border border-base-border bg-base-bg px-4 py-3 text-sm outline-none transition-colors placeholder:text-foreground-muted/60 focus:border-accent-cyan"
+                  className="w-full rounded-xl border border-[#263440] bg-[#0b1117] px-4 py-3 text-sm text-[#e6edf5] caret-[#2dd4bf] outline-none transition-colors placeholder:text-[#8391a2] focus:border-[#2dd4bf] focus:ring-2 focus:ring-[#2dd4bf]/15"
                 />
                 <p className="mt-2 text-xs text-foreground-muted">
                   Your email will only be included in the message sent to the
@@ -256,7 +256,7 @@ export function ArticleDetail() {
                 value={comment}
                 onChange={(event) => setComment(event.target.value)}
                 placeholder="Share your thoughts about this article..."
-                className="w-full resize-y rounded-xl border border-base-border bg-base-bg px-4 py-3 text-sm leading-6 outline-none transition-colors placeholder:text-foreground-muted/60 focus:border-accent-cyan"
+                className="w-full resize-y rounded-xl border border-[#263440] bg-[#0b1117] px-4 py-3 text-sm leading-6 text-[#e6edf5] caret-[#2dd4bf] outline-none transition-colors placeholder:text-[#8391a2] focus:border-[#2dd4bf] focus:ring-2 focus:ring-[#2dd4bf]/15"
               />
             </div>
 
